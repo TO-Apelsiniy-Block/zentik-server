@@ -1,0 +1,6 @@
+@ZenticServer_HostAddress = http://localhost:5174
+
+GET {{ZenticServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
