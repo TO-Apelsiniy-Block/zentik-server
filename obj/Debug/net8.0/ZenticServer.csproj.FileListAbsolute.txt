@@ -31,3 +31,4 @@
 /home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ZenticServer.pdb
 /home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ZenticServer.genruntimeconfig.cache
 /home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ref/ZenticServer.dll
+/home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ZenticServer.sourcelink.json
