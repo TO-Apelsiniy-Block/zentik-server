@@ -9,7 +9,7 @@ namespace ZenticServer.Message;
 
 // Контроллер для работы с сообщениями: отправка, изменение, удаление
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/message")]
 public class MessageController
 {
     [HttpPost]
@@ -18,7 +18,8 @@ public class MessageController
         await EventManager.Instance.SendEvent(
             new NewMessageEvent(newMessageData.Message, 0, newMessageData.ChatId), 
             EventType.NewMessage, 
-            newMessageData.ChatId);
+            newMessageData.ChatId
+        );
     }
 }
 

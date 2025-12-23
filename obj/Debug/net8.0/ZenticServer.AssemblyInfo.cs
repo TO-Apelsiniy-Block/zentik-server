@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ZenticServer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01753be2498acda2bb2218a8dd923b20b39174e5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+81b8fc0fda70d4b1194896d13a7c3a06ede4e9c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("ZenticServer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ZenticServer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

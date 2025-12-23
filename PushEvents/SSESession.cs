@@ -24,7 +24,7 @@ public class SSESession
     }
     
     public async Task SendAsync(string data)
-    { // А если в data /n/n/n/n? Через data: data: data:
+    {
         await _eventsQueue.Writer.WriteAsync($"data: {data}\n\n", SessionClosedToken);
     }
     
