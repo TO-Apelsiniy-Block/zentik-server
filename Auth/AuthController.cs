@@ -10,7 +10,7 @@ namespace ZenticServer.Auth;
 
 
 [ApiController]
-[Route("api/auth")]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     // Сначала подтверждение почты, потом регистрация
@@ -23,22 +23,21 @@ public class AuthController : ControllerBase
     [HttpPost("email_confirmation")]
     public async Task EmailConfirmation()
     {
-        
     }
     
     [HttpPost("login")]
-    public async Task<IResult> Login(IConfiguration config, LoginRequest loginData)
+    public async Task<ActionResult<LoginResponse>> Login(IConfiguration config, LoginRequest loginData)
     {
         if (!true)
         {
-            return Results.Unauthorized();
+            return Unauthorized();
         }
         
         var tokenString = new JwtSecurityTokenHandler().WriteToken(
             JwtHandler.Instance.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
             new JwtTokenData(Email: loginData.Email)));
 
-        return Results.Ok(new LoginResponse(tokenString));
+        return new LoginResponse(tokenString);
     }
 
 
@@ -46,7 +45,7 @@ public class AuthController : ControllerBase
     public record LoginRequest(
         [Required] [property: JsonPropertyName("email")] string Email, 
         [Required] [property: JsonPropertyName("password")] string Password);
-    record LoginResponse(string Token);
+    public record LoginResponse(string Token);
 
 
 }

@@ -9,14 +9,14 @@ using ZenticServer.Auth;
 namespace ZenticServer.Message;
 
 
-// Контроллер для работы с сообщениями: отправка, изменение, удаление
+// Контроллер для работы с сообщениями: отправка, изменение, удаление, получение
 [ApiController]
-[Route("api/message")]
+[Route("message")]
 public class MessageController : ControllerBase
 {
     [HttpPost]
     [Authorize]
-    public async Task WriteMessage(NewMessageData newMessageData)
+    public async Task<IResult> WriteMessage(NewMessageData newMessageData)
     {
         var userId = User.GetUserId();
         await EventManager.Instance.SendEvent(
@@ -24,6 +24,14 @@ public class MessageController : ControllerBase
             EventType.NewMessage, 
             newMessageData.ChatId
         );
+        return Results.Ok();
+    }
+    
+    [HttpGet]
+    [Authorize]
+    public async Task GetMessagesFromChat(int offset, int limit)
+    {
+        
     }
 }
 

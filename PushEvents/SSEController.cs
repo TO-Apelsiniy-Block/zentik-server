@@ -6,7 +6,7 @@ namespace ZenticServer.PushEvents;
 
 // Контроллер для SSE. Только принимает соединение и передает его в SSESessionManager 
 [ApiController]
-[Route("api/sse")]
+[Route("sse")]
 public class SSEController : ControllerBase
 {
     [HttpGet("{chatId}")]
