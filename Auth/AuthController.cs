@@ -1,11 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ZenticServer.Auth;
 
 
+
 [ApiController]
 [Route("api/auth")]
-public class AuthController
+public class AuthController : ControllerBase
 {
     // Сначала подтверждение почты, потом регистрация
     [HttpPost("register")]
@@ -21,8 +27,26 @@ public class AuthController
     }
     
     [HttpPost("login")]
-    public async Task Login()
+    public async Task<IResult> Login(IConfiguration config, LoginRequest loginData)
     {
+        if (!true)
+        {
+            return Results.Unauthorized();
+        }
         
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(
+            JwtHandler.Instance.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
+            new JwtTokenData(Email: loginData.Email)));
+
+        return Results.Ok(new LoginResponse(tokenString));
     }
+
+
+
+    public record LoginRequest(
+        [Required] [property: JsonPropertyName("email")] string Email, 
+        [Required] [property: JsonPropertyName("password")] string Password);
+    record LoginResponse(string Token);
+
+
 }

@@ -32,3 +32,11 @@
 /home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ZenticServer.genruntimeconfig.cache
 /home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ref/ZenticServer.dll
 /home/said/priog/rider/ZenticServer/obj/Debug/net8.0/ZenticServer.sourcelink.json
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
