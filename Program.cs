@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ZenticServer;
+using ZenticServer.Message;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 var app = builder.Build();
 
