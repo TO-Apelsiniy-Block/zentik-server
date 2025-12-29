@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace ZenticServer.Message;
 
-public record MessageModel(
+public record Model(
     [Required] [property: JsonPropertyName("text")]  string Text,
     [Required] [property: JsonPropertyName("send_time")] DateTime SendTime,
     [Required] [property: JsonPropertyName("message_id")] int MessageId,

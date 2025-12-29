@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ZenticServer.Message;
+namespace ZenticServer.Chat.Pm;
 
 // Контроллер для личных сообщений (ЛС): создание чатов, удаление
 // Сюда выносятся эндпоинты имеющие разные интерфейсы для разных типов чатов
 [ApiController]
 [Route("chat/pm")]
-public class PmChatController : ControllerBase
+public class Controller : ControllerBase
 {
     [HttpPost]
     [Authorize]

@@ -11,19 +11,43 @@ namespace ZenticServer.Auth;
 
 [ApiController]
 [Route("auth")]
-public class AuthController : ControllerBase
+public class Controller : ControllerBase
 {
     // Сначала подтверждение почты, потом регистрация
     [HttpPost("register")]
-    public async Task Register()
+    public async Task<IActionResult> Register(
+        User.IRepository userRepository)
     {
+        await userRepository.Create("qwe", "Qwe");
+        return Ok();
         
     }
 
-    [HttpPost("email_confirmation")]
-    public async Task EmailConfirmation()
+    
+    // Выслать код на почту
+    [HttpPost("email_confirmation/send_code")]
+    public async Task<IActionResult> EmailConfirmationSend(
+        EmailConfirmationSendRequest confirmationRequest)
     {
+        return Ok();
     }
+    
+    public record EmailConfirmationSendRequest(
+        [Required] [property: JsonPropertyName("email")] string Email);
+    
+    
+    // Проверить верность кода
+    [HttpPost("email_confirmation/get_code")]
+    public async Task<IActionResult> EmailConfirmationEnter(
+        EmailConfirmationEnterRequest confirmationRequest)
+    {
+        return Ok();
+    }
+
+    public record EmailConfirmationEnterRequest(
+        [Required] [property: JsonPropertyName("email")] string Email,
+        [Required] [property: JsonPropertyName("code")] int Code);
+    
     
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login(IConfiguration config, LoginRequest loginData)
@@ -39,8 +63,6 @@ public class AuthController : ControllerBase
 
         return new LoginResponse(tokenString);
     }
-
-
 
     public record LoginRequest(
         [Required] [property: JsonPropertyName("email")] string Email, 

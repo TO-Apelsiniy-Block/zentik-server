@@ -14,7 +14,6 @@ public class SSESessionManager
     
     private readonly ConcurrentDictionary<int, ConcurrentDictionary<int, SSESession>> _sessionPull; 
     
-    
     private SSESessionManager()
     {
         _sessionPull = new ();
@@ -24,14 +23,17 @@ public class SSESessionManager
     {
         Console.WriteLine($"Add to session pull {chatId} {deviceId}");
         if (!_sessionPull.ContainsKey(chatId))
+        { // А если будет добавлено одновременно две новые сессии и одна из них сотрет другую? 
             _sessionPull[chatId] = new ConcurrentDictionary<int, SSESession>();
+        }
+
         _sessionPull[chatId][deviceId] = new SSESession(httpContext);
         httpContext.RequestAborted.Register(CloseSessionPartial(chatId, deviceId));
     }
 
     public async Task SendMessage(string message, EventType eventType, int chatId)
     {
-        
+        // Возвращает true, если сообщение отправлено хотя бы на одно из устройств 
         foreach (var session in _sessionPull[chatId].Values)
         {
             try
@@ -40,10 +42,9 @@ public class SSESessionManager
             }
             catch (TaskCanceledException e)
             { }
-            // Коротко - отключение пользователя до отправки, но после начала рассылки вызывает ошибку
+            // Отключение пользователя до отправки, но после начала рассылки вызывает ошибку
             // Если юзер подключается во время рассылки, то может проморгать событие
         }
-        
     }
 
     private Action CloseSessionPartial(int chatId, int deviceId)
@@ -56,7 +57,7 @@ public class SSESessionManager
         Console.WriteLine($"Delete from session pull {chatId} {deviceId}");
         _sessionPull[chatId].TryRemove(deviceId, out _);
         if (_sessionPull[chatId].Count == 0)
-        {
+        { // А если в этот момент произойдет подключение?
             _sessionPull.TryRemove(chatId, out _);
         }
     }

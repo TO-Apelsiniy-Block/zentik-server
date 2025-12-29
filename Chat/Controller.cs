@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZenticServer.Auth;
 
-namespace ZenticServer.Message;
+namespace ZenticServer.Chat;
 
 // Контроллер для работы с чатами (ЛС, группы, каналы): получение 
 [ApiController]
 [Route("chat")]
-public class ChatController : ControllerBase
+public class Controller : ControllerBase
 {
     [HttpGet]
     [Authorize]

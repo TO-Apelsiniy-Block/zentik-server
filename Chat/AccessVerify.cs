@@ -1,6 +1,6 @@
 namespace ZenticServer.Message;
 
-public class ChatAccessVerify
+public class AccessVerify
 {
     // Проверка доступа пользователю на действия в чате
 }

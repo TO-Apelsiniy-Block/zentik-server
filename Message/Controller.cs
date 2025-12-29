@@ -14,30 +14,39 @@ namespace ZenticServer.Message;
 // Контроллер для работы с сообщениями: отправка, изменение, удаление, получение
 [ApiController]
 [Route("message")]
-public class MessageController : ControllerBase
+public class Controller : ControllerBase
 {
     [HttpPost]
     [Authorize]
     public async Task<IResult> WriteMessage(
         NewMessageData newMessageData, 
-        IMessageRepository messageRepository)
+        IRepository repository)
     {
         var userId = User.GetUserId();
-        await messageRepository.CreateMessage(newMessageData.Text, 
-            User.GetUserId(), newMessageData.ChatId);
-        await EventManager.Instance.SendEvent(
-            new NewMessageEvent(newMessageData.Text, userId, newMessageData.ChatId), 
-            EventType.NewMessage, newMessageData.ChatId);
+        try
+        {
+            await repository.CreateMessage(newMessageData.Text, 
+                User.GetUserId(), newMessageData.ChatId);
+            await EventManager.Instance.SendEvent(
+                new NewMessageEvent(newMessageData.Text, userId, newMessageData.ChatId), 
+                EventType.NewMessage, newMessageData.ChatId);
+        }
+        catch (Exceptions.NotFound e)
+        {
+            return Results.NotFound("Chat not found");
+        }
+
+
         return Results.Ok();
     }
     
     [HttpGet("{chatId}")]
     [Authorize]
     public async Task<ActionResult<GetMessagesFromChatResponse>> GetMessagesFromChat(
-        int offset, int limit, int chatId, IMessageRepository messageRepository)
+        int offset, int limit, int chatId, IRepository repository)
     {
         return new GetMessagesFromChatResponse(
-            (await messageRepository.GetMessages(chatId, offset, limit)).ConvertAll(model =>
+            (await repository.GetMessages(chatId, offset, limit)).ConvertAll(model =>
                 new GetMessagesFromChatResponseField(model.Text, model.SendTime, model.ChatId, model.MessageId)));
 
     }
