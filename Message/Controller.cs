@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using ZenticServer.PushEvents;
-using ZenticServer.PushEvents.Events;
 using Microsoft.AspNetCore.Authorization;
 using ZenticServer.Auth;
 
@@ -20,15 +18,16 @@ public class Controller : ControllerBase
     [Authorize]
     public async Task<IResult> WriteMessage(
         NewMessageData newMessageData, 
-        IRepository repository)
+        IRepository repository,
+        PushEvents.EventManager eventManager)
     {
         var userId = User.GetUserId();
         try
         {
             await repository.CreateMessage(newMessageData.Text, 
                 User.GetUserId(), newMessageData.ChatId);
-            await EventManager.Instance.SendEvent(
-                new NewMessage(newMessageData.Text, userId, newMessageData.ChatId), 
+            await eventManager.SendEvent(
+                new PushEvents.Events.NewMessage(newMessageData.Text, userId, newMessageData.ChatId), 
                 newMessageData.ChatId);
         }
         catch (Exceptions.NotFound e)

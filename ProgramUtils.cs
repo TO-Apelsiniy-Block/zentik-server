@@ -1,44 +1,72 @@
-
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ZenticServer.PushEvents;
 
 namespace ZenticServer;
 
-public static class ProgramUtils
+public class ProgramUtils
 {
-    public static void SetDependencyInjection(WebApplicationBuilder builder)
+    private static JwtSettings _jwtSettings;
+    private static SseSettings _sseSettings;
+    private static WebApplicationBuilder _builder;
+
+    public static void BuilderSetup(WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<Chat.IRepository, Chat.Repository>();
-        builder.Services.AddScoped<Message.IRepository, Message.Repository>();
-        builder.Services.AddScoped<User.IRepository, User.Repository>();
+        new ProgramUtils(builder);
     }
     
-    public static void SetAuth(WebApplicationBuilder builder)
+    private void SetDependencyInjection()
     {
-        builder.Services.Configure<JwtSettings>(
-            builder.Configuration.GetSection("JwtSettings"));
-        
-        var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
-        var secretKey = jwtSettings.Secret ?? throw 
+        _builder.Services.AddScoped<Chat.IRepository, Chat.Repository>();
+        _builder.Services.AddScoped<Message.IRepository, Message.Repository>();
+        _builder.Services.AddScoped<User.IRepository, User.Repository>();
+
+        var sessionManager = new SseSessionManager(_sseSettings);
+        _builder.Services.AddSingleton(sessionManager);
+        _builder.Services.AddSingleton(new PushEvents.EventManager(sessionManager));
+    }
+    
+    private void SetAuth()
+    {
+
+        var secretKey = _jwtSettings.Secret ?? throw 
             new InvalidOperationException("JWT Secret not configured");
         
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        _builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = jwtSettings.Issuer,
+                    ValidIssuer = _jwtSettings.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = jwtSettings.Audience,
+                    ValidAudience = _jwtSettings.Audience,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
             });
 
-        builder.Services.AddAuthorization();
+        _builder.Services.AddAuthorization();
+    }
+
+    private ProgramUtils(WebApplicationBuilder builder)
+    {
+        _builder = builder;
+        LoadSettings();
+        SetAuth();
+        SetDependencyInjection();
+    }
+
+    private static void LoadSettings()
+    {
+        _builder.Services.Configure<JwtSettings>(
+            _builder.Configuration.GetSection("JwtSettings"));
+        
+        _jwtSettings = _builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
+
+        _sseSettings = new SseSettings();
     }
     
     

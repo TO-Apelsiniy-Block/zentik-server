@@ -10,27 +10,21 @@ namespace ZenticServer.PushEvents;
 public class SseController : ControllerBase
 {
     [HttpGet("{chatId}")]
-    public async Task GetEvents(int chatId)
+    public async Task GetEvents(int chatId, SseSessionManager sessionManager)
     {
         Console.WriteLine("GetEvents Start");
+        
+        sessionManager.AddSession(HttpContext, chatId, Random.Shared.Next());
+        
+        // Бесконечное ожидание закрытия соединения
         var ct = Response.HttpContext.RequestAborted;
-        SseSessionManager.Instance.AddSession(HttpContext, chatId, Random.Shared.Next());
-        while (!ct.IsCancellationRequested)
-        {
-            try
-            {
-                await Task.Delay(TimeSpan.FromSeconds(100), ct);
-            }
-            catch (OperationCanceledException e) {}
+        try 
+        { 
+            await Task.Delay(Timeout.Infinite, ct);
         }
+        catch (OperationCanceledException e) {}
+        
         Console.WriteLine("GetEvents End");
     }
-
-    [HttpGet("qwe")]
-    public async Task Qwe(EventManager eventManager)
-    {
-        eventManager.SendEvent(new Events.NewMessage("qwe", 1, 3), 3);
-    }
-    
 }
 
