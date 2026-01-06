@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace ZenticServer.PushEvents.Events;
+namespace ZenticServer.OldPushEvents.Events;
 
 public record NewMessageEvent(
     [property: JsonPropertyName("message_text")] [Required] string MessageText,

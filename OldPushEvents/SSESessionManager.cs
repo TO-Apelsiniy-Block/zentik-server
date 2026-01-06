@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace ZenticServer.PushEvents;
+namespace ZenticServer.OldPushEvents;
 
 
 // Класс для управления пулом сессий SSE

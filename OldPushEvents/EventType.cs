@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace ZenticServer.PushEvents;
+namespace ZenticServer.OldPushEvents;
 
 
 // Типы событий

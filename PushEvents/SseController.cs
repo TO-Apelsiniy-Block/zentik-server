@@ -7,14 +7,14 @@ namespace ZenticServer.PushEvents;
 // Контроллер для SSE. Только принимает соединение и передает его в SSESessionManager 
 [ApiController]
 [Route("sse")]
-public class SSEController : ControllerBase
+public class SseController : ControllerBase
 {
     [HttpGet("{chatId}")]
     public async Task GetEvents(int chatId)
     {
         Console.WriteLine("GetEvents Start");
         var ct = Response.HttpContext.RequestAborted;
-        SSESessionManager.Instance.AddSession(HttpContext, chatId, Random.Shared.Next());
+        SseSessionManager.Instance.AddSession(HttpContext, chatId, Random.Shared.Next());
         while (!ct.IsCancellationRequested)
         {
             try
@@ -25,5 +25,12 @@ public class SSEController : ControllerBase
         }
         Console.WriteLine("GetEvents End");
     }
+
+    [HttpGet("qwe")]
+    public async Task Qwe(EventManager eventManager)
+    {
+        eventManager.SendEvent(new Events.NewMessage("qwe", 1, 3), 3);
+    }
+    
 }
 

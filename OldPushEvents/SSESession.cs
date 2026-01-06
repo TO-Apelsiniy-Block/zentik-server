@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ZenticServer.PushEvents;
+namespace ZenticServer.OldPushEvents;
 
 using System.Threading.Channels;
 

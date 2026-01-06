@@ -28,8 +28,8 @@ public class Controller : ControllerBase
             await repository.CreateMessage(newMessageData.Text, 
                 User.GetUserId(), newMessageData.ChatId);
             await EventManager.Instance.SendEvent(
-                new NewMessageEvent(newMessageData.Text, userId, newMessageData.ChatId), 
-                EventType.NewMessage, newMessageData.ChatId);
+                new NewMessage(newMessageData.Text, userId, newMessageData.ChatId), 
+                newMessageData.ChatId);
         }
         catch (Exceptions.NotFound e)
         {
