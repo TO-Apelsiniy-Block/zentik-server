@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -38,4 +39,6 @@ public class JwtHandler
     }
 }
 
-public record JwtTokenData(string Email); 
+public record JwtTokenData(
+    [Required] string Email,
+    [Required] int UserId); 

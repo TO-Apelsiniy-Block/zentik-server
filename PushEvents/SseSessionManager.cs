@@ -25,13 +25,19 @@ public class SseSessionManager
         
     }
     
-    public void AddSession(HttpContext httpContext, int chatId, int deviceId)
+    public async Task AddSession(HttpResponse httpResponse, int userId, int deviceId)
     {
-        var currentChannel = _channels[chatId % _settings.ChannelsCount];
+        var currentChannel = _channels[userId % _settings.ChannelsCount];
+        
+        currentChannel.SendEvent(new AddSessionEvent(userId, deviceId, httpResponse));
     }
 
-    public async Task SendMessage(string message, Types types, int chatId)
+    public async Task Send(string message, EventTypes eventTypes, int userId)
     {
-        await _channels[0].SendEvent(new SendSessionEvent());
+        // TODO мб надо отправлять еще и тип?
+        _channels[userId % _settings.ChannelsCount].SendEvent(
+            new SendSessionEvent(
+                $"event: {EventTypesExtension.ToString(eventTypes)}\ndata:{message}\n\n", 
+                userId));
     }
 }

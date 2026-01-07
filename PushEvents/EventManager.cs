@@ -16,8 +16,9 @@ public class EventManager
         _sessionManager = sessionManager;
     }
     
-    public async Task SendEvent(Events.IEvent eventData, int chatId)
-    { // А если сессии нема?
-        await _sessionManager.SendMessage(JsonSerializer.Serialize(eventData), eventData.Type, chatId);
+    public async Task SendEvent(Events.IEvent eventData, int userId)
+    { 
+        // Событие отправляется именно юзеру 
+        await _sessionManager.Send(JsonSerializer.Serialize(eventData), EventTypes.NewMessage, userId);
     }
 }

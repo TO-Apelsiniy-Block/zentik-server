@@ -59,7 +59,7 @@ public class Controller : ControllerBase
         
         var tokenString = new JwtSecurityTokenHandler().WriteToken(
             JwtHandler.Instance.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
-            new JwtTokenData(Email: loginData.Email)));
+            new JwtTokenData(Email: loginData.Email, 3)));
 
         return new LoginResponse(tokenString);
     }
