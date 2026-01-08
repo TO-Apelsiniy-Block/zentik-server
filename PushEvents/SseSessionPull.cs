@@ -11,7 +11,8 @@ public class SseSessionPull
 {
     private readonly Channel<ISessionEvent> _eventsQueue = Channel.CreateUnbounded<ISessionEvent>();
     private readonly Dictionary<int, Dictionary<int, SseSession>> _sessions = new ();
-    private Task _handlerEvents;
+    private readonly Task _handlerEvents;
+    
 
     public SseSessionPull()
     {
@@ -32,7 +33,7 @@ public class SseSessionPull
         }
         _sessions[eventData.UserId][eventData.DeviceId] = new(eventData.HttpResponse);
         eventData.HttpResponse.Headers.ContentType = "text/event-stream";
-        await _sessions[eventData.UserId][eventData.DeviceId].Send(":new-connect\n\n");
+        await _sessions[eventData.UserId][eventData.DeviceId].Send(":new-connect");
         // Ставим заголовок и отправляем комментарий чтобы клиент понял что подключение прошло успешно
         eventData.HttpResponse.HttpContext.RequestAborted.Register(
             () => SendEvent(new DeleteSessionEvent(eventData.UserId, eventData.DeviceId)));
@@ -58,9 +59,16 @@ public class SseSessionPull
         }
     }
 
-    private async Task SendKeepAlive()
+    private async Task SendKeepAlive(KeepAliveSessionEvent eventData)
     {
         // Рассылка keep-alive
+        foreach (var userSessions in _sessions.Values)
+        {
+            foreach (var session in userSessions.Values)
+            {
+                await session.Send(":keep-alive");
+            }
+        }
     }
     
     private async Task HandlerEvents()
@@ -89,6 +97,7 @@ public class SseSessionPull
                     break;
                 case KeepAliveSessionEvent:
                     Console.WriteLine("KeepAliveSessionEvent");
+                    await SendKeepAlive((sessionEvent as KeepAliveSessionEvent)!);
                     break;
                 
             }

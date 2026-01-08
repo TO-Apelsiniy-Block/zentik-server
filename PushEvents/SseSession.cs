@@ -14,10 +14,10 @@ public class SseSession
     {
         // Токен отмены не сую специально, чтобы не было необходимости отлавливать его отмену
         // В любом случае если отправим события в закрытый канал ничего не будет
-        Console.WriteLine($"Write message 11111111: {message}");
+        
         await _httpResponse.WriteAsync(message);
-        Console.WriteLine($"Write message 22222222: {message}");
+        if (!message.EndsWith("\n\n"))
+            await _httpResponse.WriteAsync("\n\n");
         await _httpResponse.BodyWriter.FlushAsync();
-        Console.WriteLine($"Write message: 3333333 {message}");
     }
 }

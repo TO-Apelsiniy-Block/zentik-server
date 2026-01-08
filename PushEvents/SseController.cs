@@ -17,7 +17,7 @@ public class SseController : ControllerBase
         Console.WriteLine("GetEvents Start");
         
         // TODO костыль для deviceId
-        await sessionManager.AddSession(HttpContext.Response, userId, Random.Shared.Next());
+        sessionManager.AddSession(HttpContext.Response, userId, Random.Shared.Next());
         
         // Бесконечное ожидание закрытия соединения
         var ct = Response.HttpContext.RequestAborted;

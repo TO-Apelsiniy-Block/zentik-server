@@ -26,7 +26,7 @@ public class Controller : ControllerBase
         {
             await repository.CreateMessage(newMessageData.Text, 
                 User.GetUserId(), newMessageData.ChatId);
-            await eventManager.SendEvent(
+            await eventManager.SendMessage(
                 new PushEvents.Events.NewMessage(newMessageData.Text, userId, newMessageData.ChatId), 
                 newMessageData.ChatId);
         }

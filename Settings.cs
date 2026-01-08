@@ -11,4 +11,5 @@ public class JwtSettings
 public class SseSettings
 {
     public int ChannelsCount { get; set; } = 5;
+    public int KeepAliveTimer { get; set; } = 3;
 }
