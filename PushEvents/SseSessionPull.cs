@@ -27,16 +27,28 @@ public class SseSessionPull
     private async Task AddSession(AddSessionEvent eventData)
     {
         // Добавить сессию
-        if (!_sessions.ContainsKey(eventData.UserId))
-        {
+        if (!_sessions.TryGetValue(eventData.UserId, out var userSessions))
             _sessions[eventData.UserId] = new();
+        if (_sessions[eventData.UserId].TryGetValue(eventData.DeviceId, out var oldSession))
+        { // Если одно устройство установило соединение два раза, то закрываем оба
+            Console.WriteLine("Close start");
+            eventData.HttpResponse.HttpContext.Abort();
+            Console.WriteLine(eventData.HttpResponse.HttpContext.RequestAborted.IsCancellationRequested);
+            
+            await _sessions[eventData.UserId][eventData.DeviceId].Close();
+            Console.WriteLine("Close end");
+            
+            return; 
         }
         _sessions[eventData.UserId][eventData.DeviceId] = new(eventData.HttpResponse);
+        
         eventData.HttpResponse.Headers.ContentType = "text/event-stream";
         await _sessions[eventData.UserId][eventData.DeviceId].Send(":new-connect");
         // Ставим заголовок и отправляем комментарий чтобы клиент понял что подключение прошло успешно
+        
         eventData.HttpResponse.HttpContext.RequestAborted.Register(
             () => SendEvent(new DeleteSessionEvent(eventData.UserId, eventData.DeviceId)));
+        // Прокидываем callback для обработки закрытия
 
     }
     
@@ -50,7 +62,7 @@ public class SseSessionPull
     {
         // Отправить сообщение клиенту
         
-        // Ищем в словаре, если нащли отправили иначе хер забили
+        // Ищем в словаре, если нашли отправили иначе хер забили
         if (!_sessions.TryGetValue(eventData.UserId, out var userSessions))
             return;
         foreach (var session in userSessions.Values)
@@ -81,6 +93,7 @@ public class SseSessionPull
 
         await foreach (var sessionEvent in _eventsQueue.Reader.ReadAllAsync())
         {
+            Console.WriteLine("New Event !!!");
             switch (sessionEvent)
             {
                 case SendSessionEvent:

@@ -37,7 +37,6 @@ public class SseSessionManager
 
     public void Send(string message, EventTypes eventTypes, int userId)
     {
-        // TODO мб надо отправлять еще и тип?
         _channels[userId % _settings.ChannelsCount].SendEvent(
             new SendSessionEvent(
                 $"event: {EventTypesExtension.ToString(eventTypes)}\ndata:{message}", 

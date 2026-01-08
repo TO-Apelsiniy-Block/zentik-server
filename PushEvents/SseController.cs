@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Channels;
 using Microsoft.AspNetCore.Authorization;
+using ZenticServer.Auth;
 
 namespace ZenticServer.PushEvents;
 
@@ -10,14 +11,13 @@ namespace ZenticServer.PushEvents;
 [Route("sse")]
 public class SseController : ControllerBase
 {
-    [HttpGet("{userId}")]
+    [HttpGet("")]
     [Authorize]
-    public async Task GetEvents(int userId, SseSessionManager sessionManager)
+    public async Task GetEvents(int deviceId, SseSessionManager sessionManager)
     {
         Console.WriteLine("GetEvents Start");
         
-        // TODO костыль для deviceId
-        sessionManager.AddSession(HttpContext.Response, userId, Random.Shared.Next());
+        sessionManager.AddSession(HttpContext.Response, User.GetUserId(), deviceId);
         
         // Бесконечное ожидание закрытия соединения
         var ct = Response.HttpContext.RequestAborted;
