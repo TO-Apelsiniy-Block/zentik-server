@@ -25,8 +25,8 @@ public class JwtHandler
         var claims = new[]
         {
             new Claim(JwtClaimFields.Email, tokenData.Email),
-            new Claim(JwtClaimFields.UserId, tokenData.Email.GetHashCode().ToString()),
-            new Claim(JwtClaimFields.Role, "user")
+            new Claim(JwtClaimFields.UserId, tokenData.UserId.ToString(), ClaimValueTypes.Integer32),
+            new Claim(JwtClaimFields.Role, "user"),
         };
 
         return new JwtSecurityToken(
