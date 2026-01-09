@@ -13,10 +13,18 @@ public class Controller : ControllerBase
     // Сначала подтверждение почты, потом регистрация
     [HttpPost("register")]
     public async Task<IActionResult> Register(
-        User.IRepository userRepository)
+        User.IRepository userRepository,
+        RegisterRequest bodyData)
     {
+        // TODO хеширование
+        await userRepository.Create(bodyData.Username, bodyData.Password, bodyData.Email);
         return Ok();
     }
+    public record RegisterRequest(
+        [Required] [property: JsonPropertyName("username")] string Username,
+        [Required] [property: JsonPropertyName("password")] string Password,
+        [Required] [property: JsonPropertyName("email")] string Email);
+    
 
     
     // Выслать код на почту

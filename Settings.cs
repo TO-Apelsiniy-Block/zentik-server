@@ -13,3 +13,9 @@ public class SseSettings
     public int ChannelsCount { get; set; } = 1;
     public int KeepAliveTimer { get; set; } = 10;
 }
+
+public class DbSettings
+{
+    // TODO убрать пароль куда-то
+    public string ConnectionString { get; set; } = string.Empty;
+}

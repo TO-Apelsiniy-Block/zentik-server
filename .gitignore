@@ -42,6 +42,10 @@ artifacts/             # Custom build artifacts
 bld/                   # Build directories
 [Ll]og/                # Logs generated during builds
 
+bin/
+obj/
+.idea/
+
 ## Temporary and Log Files
 # Ignore temporary files, logs, and caches created during development.
 *.log                  # Log files
@@ -162,3 +166,6 @@ Thumbs.db              # Windows Explorer metadata
 # Editor-Specific (Optional)
 # Uncomment if you do not use EditorConfig.
 # .editorconfig
+
+/Temp
+/.idea/

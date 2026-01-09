@@ -1,7 +1,8 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ZenticServer.PushEvents;
+using Npgsql;
 
 namespace ZenticServer;
 
@@ -9,6 +10,8 @@ public class ProgramUtils
 {
     private static JwtSettings _jwtSettings;
     private static SseSettings _sseSettings;
+    private static DbSettings _dbSettings;
+    
     private static WebApplicationBuilder _builder;
 
     public static void BuilderSetup(WebApplicationBuilder builder)
@@ -22,7 +25,7 @@ public class ProgramUtils
         _builder.Services.AddScoped<Message.IRepository, Message.Repository>();
         _builder.Services.AddScoped<User.IRepository, User.Repository>();
 
-        var sessionManager = new SseSessionManager(_sseSettings);
+        var sessionManager = new PushEvents.SseSessionManager(_sseSettings);
         _builder.Services.AddSingleton(sessionManager);
         _builder.Services.AddSingleton(new PushEvents.EventManager(sessionManager));
     }
@@ -51,12 +54,32 @@ public class ProgramUtils
         _builder.Services.AddAuthorization();
     }
 
+    private async Task SetDbConnection()
+    {
+        var connectionString = "Host=127.0.0.1;Username=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ;Password=qweqwe;Database=Zentik";
+        Console.WriteLine(_dbSettings.ConnectionString);
+        _builder.Services.AddDbContext<Db.ApplicationDbContext>(options =>
+        {
+            options.UseNpgsql(
+                _dbSettings.ConnectionString,
+                npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorCodesToAdd: null);
+                });
+        });
+
+    }
+
     private ProgramUtils(WebApplicationBuilder builder)
     {
         _builder = builder;
         LoadSettings();
         SetAuth();
         SetDependencyInjection();
+        SetDbConnection().GetAwaiter().GetResult();
     }
 
     private static void LoadSettings()
@@ -67,6 +90,8 @@ public class ProgramUtils
         _jwtSettings = _builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
 
         _sseSettings = new SseSettings();
+
+        _dbSettings = _builder.Configuration.GetSection("DbSettings").Get<DbSettings>()!;
     }
     
     
