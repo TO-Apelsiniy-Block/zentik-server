@@ -50,7 +50,7 @@ public class Controller : ControllerBase
     {
         return new GetMessagesFromChatResponse(
             (await repository.GetMessages(chatId, offset, limit)).ConvertAll(model =>
-                new GetMessagesFromChatResponseField(model.Text, model.SendTime, model.ChatId, model.MessageId)));
+                new GetMessagesFromChatResponseField(model.Text, model.CreatedAt, model.ChatId, model.MessageId)));
     }
     
     public record GetMessagesFromChatResponse(

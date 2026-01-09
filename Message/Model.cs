@@ -3,9 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace ZenticServer.Message;
 
-public record Model(
-    [Required] [property: JsonPropertyName("text")]  string Text,
-    [Required] [property: JsonPropertyName("send_time")] DateTime SendTime,
-    [Required] [property: JsonPropertyName("message_id")] int MessageId,
-    [Required] [property: JsonPropertyName("sender_id")] int SenderId,
-    [Required] [property: JsonPropertyName("chat_id")] int ChatId);
+public class Model : Base.Model
+{ 
+    [MaxLength(4096)]
+    public string Text;
+    
+    public int MessageId;
+    
+    public int SenderId;
+    
+    public int ChatId;
+
+
+    public Chat.Model Chat = null!;
+    public User.Model Sender = null!;
+}

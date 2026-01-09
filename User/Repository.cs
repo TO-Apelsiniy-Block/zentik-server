@@ -10,7 +10,6 @@ public class Repository : IRepository
         _context = context;
     }
     
-    
     public async Task<Model> Get(string email)
     {
         try
@@ -28,7 +27,7 @@ public class Repository : IRepository
     {
         if (userId != 1)
             throw new Exceptions.NotFound();
-        return new Model(1, "said", "said@q.q");
+        return new Model();
     }
     
 

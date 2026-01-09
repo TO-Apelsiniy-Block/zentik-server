@@ -23,7 +23,9 @@ public class Controller : ControllerBase
     public record RegisterRequest(
         [Required] [property: JsonPropertyName("username")] string Username,
         [Required] [property: JsonPropertyName("password")] string Password,
-        [Required] [property: JsonPropertyName("email")] string Email);
+        [Required] [property: JsonPropertyName("email")] string Email,
+        [Required] [property: JsonPropertyName("email_code")] string EmailCode // Код подтверждения почты
+        );
     
 
     
@@ -32,24 +34,13 @@ public class Controller : ControllerBase
     public async Task<IActionResult> EmailConfirmationSend(
         EmailConfirmationSendRequest bodyData)
     {
+        // TODO определение 
         return Ok();
     }
     
     public record EmailConfirmationSendRequest(
         [Required] [property: JsonPropertyName("email")] string Email);
     
-    
-    // Проверить верность кода
-    [HttpPost("email_confirmation/check_code")]
-    public async Task<IActionResult> EmailConfirmationEnter(
-        EmailConfirmationCheckRequest bodyData)
-    {
-        return Ok();
-    }
-
-    public record EmailConfirmationCheckRequest(
-        [Required] [property: JsonPropertyName("email")] string Email,
-        [Required] [property: JsonPropertyName("code")] int Code);
     
     
     [HttpPost("login")]
