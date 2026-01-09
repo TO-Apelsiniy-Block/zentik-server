@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ZenticServer.Chat.Pm;
 
 // Контроллер для личных сообщений (ЛС): создание чатов, удаление
-// Сюда выносятся эндпоинты имеющие разные интерфейсы для разных типов чатов
+// Сюда выносятся контроллеры имеющие разные интерфейсы для разных типов чатов
 [ApiController]
 [Route("chat/pm")]
 public class Controller : ControllerBase

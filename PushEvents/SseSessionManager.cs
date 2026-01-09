@@ -1,6 +1,3 @@
-using System.Collections.Concurrent;
-using System.Security.AccessControl;
-
 namespace ZenticServer.PushEvents;
 
 
@@ -35,11 +32,11 @@ public class SseSessionManager
         currentChannel.SendEvent(new AddSessionEvent(userId, deviceId, httpResponse));
     }
 
-    public void Send(string message, EventTypes eventTypes, int userId)
+    public void Send(string message, Events.EventTypes eventTypes, int userId)
     {
         _channels[userId % _settings.ChannelsCount].SendEvent(
             new SendSessionEvent(
-                $"event: {EventTypesExtension.ToString(eventTypes)}\ndata:{message}", 
+                $"event: {Events.EventTypesExtension.ToString(eventTypes)}\ndata:{message}", 
                 userId));
     }
 

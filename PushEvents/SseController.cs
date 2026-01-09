@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Channels;
 using Microsoft.AspNetCore.Authorization;
 using ZenticServer.Auth;
 

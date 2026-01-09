@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ZenticServer.Auth;
-
 
 
 [ApiController]
@@ -18,16 +15,14 @@ public class Controller : ControllerBase
     public async Task<IActionResult> Register(
         User.IRepository userRepository)
     {
-        await userRepository.Create("qwe", "Qwe");
         return Ok();
-        
     }
 
     
     // Выслать код на почту
     [HttpPost("email_confirmation/send_code")]
     public async Task<IActionResult> EmailConfirmationSend(
-        EmailConfirmationSendRequest confirmationRequest)
+        EmailConfirmationSendRequest bodyData)
     {
         return Ok();
     }
@@ -37,14 +32,14 @@ public class Controller : ControllerBase
     
     
     // Проверить верность кода
-    [HttpPost("email_confirmation/get_code")]
+    [HttpPost("email_confirmation/check_code")]
     public async Task<IActionResult> EmailConfirmationEnter(
-        EmailConfirmationEnterRequest confirmationRequest)
+        EmailConfirmationCheckRequest bodyData)
     {
         return Ok();
     }
 
-    public record EmailConfirmationEnterRequest(
+    public record EmailConfirmationCheckRequest(
         [Required] [property: JsonPropertyName("email")] string Email,
         [Required] [property: JsonPropertyName("code")] int Code);
     

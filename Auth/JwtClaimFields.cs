@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.SignalR;
-
 namespace ZenticServer.Auth;
 
 public static class JwtClaimFields

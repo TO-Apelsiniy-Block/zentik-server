@@ -40,3 +40,14 @@
 /home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /home/said/priog/rider/ZenticServer/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Relational.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.Extensions.Caching.Memory.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.Extensions.Logging.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Microsoft.Extensions.Options.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Npgsql.dll
+/home/said/priog/rider/ZenticServer/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll

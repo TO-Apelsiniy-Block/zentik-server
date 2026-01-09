@@ -5,11 +5,11 @@ public class Repository : IRepository
     public async Task<List<Model>> Get(int userId, int offset, int limit)
     {
         var res = new List<Model>();
-        res.Add(new Model("Chat 1", "Pm"));
+        res.Add(new Model(1, "Chat 1", "Pm"));
         return res;
     }
 
-    public async Task<List<User.Model>> GetAllUsers(int chatId, int offset, int limit)
+    public async Task<List<User.Model>> GetUsersFromChat(int chatId, int offset, int limit)
     {
         var res = new List<User.Model>();
         res.Add(new (1, "said", "said@q.q"));

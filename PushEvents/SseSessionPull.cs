@@ -78,7 +78,7 @@ public class SseSessionPull
         {
             foreach (var session in userSessions.Values)
             {
-                await session.Send(":keep-alive");
+                await session.Send(":keep-alive\n\n");
             }
         }
     }
@@ -93,7 +93,6 @@ public class SseSessionPull
 
         await foreach (var sessionEvent in _eventsQueue.Reader.ReadAllAsync())
         {
-            Console.WriteLine("New Event !!!");
             switch (sessionEvent)
             {
                 case SendSessionEvent:
@@ -120,36 +119,23 @@ public class SseSessionPull
 
 public interface ISessionEvent
 {
-    string Type { get; }
 }
 
 public record SendSessionEvent(
     [Required] string Message,
     [Required] int UserId
-) : ISessionEvent
-{
-    public string Type => "send";
-}
+) : ISessionEvent;
 
 
 public record AddSessionEvent(
     [Required] int UserId,
     [Required] int DeviceId,
     [Required] HttpResponse HttpResponse
-) : ISessionEvent
-{
-    public string Type => "create";
-}
+) : ISessionEvent;
 
 public record DeleteSessionEvent(
     [Required] int UserId,
     [Required] int DeviceId
-) : ISessionEvent
-{
-    public string Type => "delete";
-}
+) : ISessionEvent;
 
-public record KeepAliveSessionEvent() : ISessionEvent
-{
-    public string Type => "keep_alive";
-}
+public record KeepAliveSessionEvent() : ISessionEvent;

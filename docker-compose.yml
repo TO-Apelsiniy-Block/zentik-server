@@ -1,0 +1,53 @@
+services:
+  postgres:
+    container_name: postgres.zentic
+    image: postgres:14.8-alpine3.18
+    environment:
+      POSTGRES_DB: "Zentik"
+      POSTGRES_USER: "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+      POSTGRES_PASSWORD: "qweqwe"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - habrdb-data.zentic:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - network.zentic
+
+  pgadmin:
+    container_name: pgadmin.zentic
+    image: dpage/pgadmin4:9.9
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "said@said.com"
+      PGADMIN_DEFAULT_PASSWORD: "qweqwe"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data.zentic:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - network.zentic
+
+volumes:
+  habrdb-data.zentic:
+  pgadmin-data.zentic:
+
+networks:
+  network.zentic:
+    driver: bridge
+    
+secrets:
+  POSTGRES_PASSWORD:
+    external: true
