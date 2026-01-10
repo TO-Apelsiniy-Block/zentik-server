@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Message.Model> Messages { get; set; }
     public DbSet<EmailConfirmation.Model> EmailConfirmations { get; set; }
     public DbSet<Chat.ChatUser.Model> ChatUsers { get; set; }
+    public DbSet<Message.Type.TextModel> MessageTexts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,7 +94,7 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(z => z.MessageId);
             entity.ToTable("message");
-            entity.Property(z => z.Text).HasColumnName("text").IsRequired();
+            entity.Property(z => z.Type).HasColumnName("type").IsRequired();
             entity.Property(z => z.ChatId).HasColumnName("chat_id").IsRequired();
             entity.Property(z => z.SenderId).HasColumnName("sender_id").IsRequired();
             entity.Property(z => z.MessageId).HasColumnName("message_id");
@@ -106,6 +107,22 @@ public class ApplicationDbContext : DbContext
                 .WithMany(z => z.Messages)
                 .HasForeignKey(z => z.SenderId)
                 .OnDelete(DeleteBehavior.Cascade); // TODO изменить удаление аккаунта на деактивацию
+            entity.HasOne(d => d.Text)
+                .WithOne(d => d.Message)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasForeignKey<Message.Type.TextModel>(e => e.MessageId);
+        });
+
+        modelBuilder.Entity<Message.Type.TextModel>(entity =>
+        {
+            entity.HasOne(d => d.Message)
+                .WithOne(d => d.Text)
+                .HasForeignKey<Message.Type.TextModel>(e => e.MessageId)
+                .IsRequired();
+            entity.HasKey(z => z.MessageId);
+            entity.ToTable("message_text");
+            entity.Property(z => z.Text).HasColumnName("text").IsRequired();
+            
         });
     }
 

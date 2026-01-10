@@ -5,8 +5,8 @@ namespace ZenticServer.Message;
 
 public class Model : Base.Model
 { 
-    [MaxLength(4096)]
-    public string Text;
+    [MaxLength(64)]
+    public string Type;
     
     public int MessageId;
     
@@ -15,6 +15,7 @@ public class Model : Base.Model
     public int ChatId;
 
 
+    public Type.TextModel? Text = null!;
     public Chat.Model Chat = null!;
     public User.Model Sender = null!;
 }

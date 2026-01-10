@@ -48,9 +48,7 @@ public class Controller : ControllerBase
     public async Task<ActionResult<GetMessagesFromChatResponse>> GetMessagesFromChat(
         int offset, int limit, int chatId, IRepository repository)
     {
-        return new GetMessagesFromChatResponse(
-            (await repository.GetMessages(chatId, offset, limit)).ConvertAll(model =>
-                new GetMessagesFromChatResponseField(model.Text, model.CreatedAt, model.ChatId, model.MessageId)));
+        throw new Exception();
     }
     
     public record GetMessagesFromChatResponse(
