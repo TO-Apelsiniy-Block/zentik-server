@@ -24,10 +24,13 @@ public class ProgramUtils
         _builder.Services.AddScoped<Chat.IRepository, Chat.Repository>();
         _builder.Services.AddScoped<Message.IRepository, Message.Repository>();
         _builder.Services.AddScoped<User.IRepository, User.Repository>();
+        _builder.Services.AddScoped<EmailConfirmation.IRepository, EmailConfirmation.Repository>();
 
         var sessionManager = new PushEvents.SseSessionManager(_sseSettings);
         _builder.Services.AddSingleton(sessionManager);
         _builder.Services.AddSingleton(new PushEvents.EventManager(sessionManager));
+
+        _builder.Services.AddScoped<Email.IService, Email.Service>();
     }
     
     private void SetAuth()

@@ -12,6 +12,10 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User.Model> Users { get; set; }
+    public DbSet<Chat.Model> Chats { get; set; }
+    public DbSet<Message.Model> Messages { get; set; }
+    public DbSet<EmailConfirmation.Model> EmailConfirmations { get; set; }
+    public DbSet<Chat.ChatUser.Model> ChatUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,6 +23,8 @@ public class ApplicationDbContext : DbContext
         ConfigureEmailConfirmation(modelBuilder);
         ConfigureChat(modelBuilder);
         ConfigureMessage(modelBuilder);
+
+        ConfigureBaseFields(modelBuilder);
     }
 
     private void ConfigureUser(ModelBuilder modelBuilder)
@@ -101,5 +107,17 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(z => z.SenderId)
                 .OnDelete(DeleteBehavior.Cascade); // TODO изменить удаление аккаунта на деактивацию
         });
+    }
+
+    private void ConfigureBaseFields(ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes()
+                     .Where(e => typeof(Base.Model).IsAssignableFrom(e.ClrType)))
+        {
+            modelBuilder.Entity(entityType.ClrType)
+                .Property<DateTime>("CreatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity(entityType.ClrType)
+                .Property<DateTime>("UpdatedAt").HasDefaultValueSql("CURRENT_TIMESTAMP");
+        }
     }
 }

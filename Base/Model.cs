@@ -5,11 +5,13 @@ namespace ZenticServer.Base;
 public class Model
 {
     // Базовая модель от которой необходимо наследоваться
+    // ВАЖНО!!! При создании новой таблицы
+    // необходимо повесить на неё тригер для обновления updated_at
     [Column("created_at")]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime CreatedAt;
     
     [Column("updated_at")]
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime UpdatedAt;
+    
+    // TODO разобраться с таймзонами
 }

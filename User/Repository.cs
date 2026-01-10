@@ -25,21 +25,35 @@ public class Repository : IRepository
 
     public async Task<Model> Get(int userId)
     {
-        if (userId != 1)
+        try
+        {
+            var user = await _context.Users.Where(b => b.UserId == userId).FirstAsync();
+            return user;
+        }
+        catch (InvalidOperationException e)
+        {
             throw new Exceptions.NotFound();
-        return new Model();
+        }
     }
     
 
     public async Task<Model> Create(string username, string password, string email)
     {
-        User.Model user = new();
-        user.Username = username;
-        user.Password = password;
-        user.Email = email;
-        await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
-        // TODO перенести коммит в другое место
+        Model user = new()
+        {
+            Username = username,
+            Password = password,
+            Email = email
+        };
+        try
+        {
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync(); // TODO перенести коммит в другое место
+        }
+        catch (DbUpdateException e)
+        {
+            throw new Exceptions.AlreadyExists();
+        }
         return user;
     }
 }
