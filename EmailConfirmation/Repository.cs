@@ -39,7 +39,11 @@ public class Repository(Db.ApplicationDbContext context) : IRepository
         try
         {
             return await _context.EmailConfirmations
-                .Where(a => a.Email == email && a.DeviceId == deviceId && a.Code == code)
+                .Where(a => 
+                    a.Email == email && 
+                    a.DeviceId == deviceId && 
+                    a.Code == code && 
+                    a.UpdatedAt + TimeSpan.FromMinutes(5) < DateTime.UtcNow)
                 .ExecuteDeleteAsync() == 1;
         }
         catch (InvalidOperationException e)
