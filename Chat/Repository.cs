@@ -26,9 +26,23 @@ public class Repository : IRepository
         {
             throw new Exceptions.NotFound();
         }
-
     }
 
+
+    public async Task<Model> Get(int chatId)
+    {
+        try
+        {
+            return await _context.Chats
+                .Where(u => u.ChatId == chatId)
+                .FirstAsync();
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new Exceptions.NotFound();
+        }
+    }
+    
 
     public async Task<List<IRepository.ChatListItemDto>> GetWithExtra(
         int userId, int offset, int limit)
@@ -86,16 +100,6 @@ public class Repository : IRepository
             throw new Exceptions.NotFound();
         }
     }
-
-
-    public async Task<List<string>> GetNames(int userId, List<int> chatsId, int offset, int limit)
-    {
-        return (await _context.Chats
-            .Select(c => new {Chat = c.Type})
-            .ToListAsync()
-        ).ConvertAll(a => a.Chat);
-    }
-        
     
     
     public async Task<List<User.Model>> GetUsersFromChat(int chatId, int offset, int limit)
@@ -107,6 +111,21 @@ public class Repository : IRepository
                 .Where(c => c.ChatId == chatId)
                 .FirstAsync();
             return chat.Users.ToList();
+        }
+        catch (InvalidOperationException e)
+        {
+            throw new Exceptions.NotFound();
+        }
+    }
+
+
+    public async Task<ChatUser.Model> GetChatUser(int chatId, int userId)
+    {
+        try
+        {
+            return await _context.ChatUsers
+                .Where(c => c.ChatId == chatId && c.UserId == userId)
+                .FirstAsync();
         }
         catch (InvalidOperationException e)
         {

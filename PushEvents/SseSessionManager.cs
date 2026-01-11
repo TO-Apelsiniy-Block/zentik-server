@@ -34,6 +34,7 @@ public class SseSessionManager
 
     public void Send(string message, Events.EventTypes eventTypes, int userId)
     {
+        Console.WriteLine($"QQQQQQQQQQQq {userId}");
         _channels[userId % _settings.ChannelsCount].SendEvent(
             new SendSessionEvent(
                 $"event: {Events.EventTypesExtension.ToString(eventTypes)}\ndata:{message}", 

@@ -27,14 +27,14 @@ public class Controller : ControllerBase
                 User.GetUserId(), bodyData.ChatId);
             eventManager.SendMessage(
                 new PushEvents.Events.NewMessage(bodyData.Text, User.GetUserId(), bodyData.ChatId), 
-                bodyData.ChatId);
+                User.GetUserId());
+            return Results.Ok();
+            
         }
         catch (Exceptions.NotFound e)
         {
             return Results.NotFound("Chat not found");
         }
-
-        return Results.Ok();
     }
     
     public record NewMessageData(
@@ -46,18 +46,47 @@ public class Controller : ControllerBase
     [HttpGet("{chatId}")]
     [Authorize]
     public async Task<ActionResult<GetMessagesFromChatResponse>> GetMessagesFromChat(
-        int offset, int limit, int chatId, IRepository repository)
+        int offset, int limit, int chatId, 
+        IRepository repository, 
+        Chat.IRepository chatRepository)
     {
-        throw new Exception();
+        try
+        {
+            var chatUser = await chatRepository.GetChatUser(chatId, User.GetUserId()); 
+        }
+        catch (Exceptions.NotFound e)
+        {
+            return Forbid();
+            // TODO сделать нормальные ошибки
+        }
+        try
+        {
+            var messages = await repository.GetMessages(chatId, offset, limit);
+            return  new GetMessagesFromChatResponse(
+                messages.ConvertAll(m => new GetMessagesFromChatResponseField(
+                    m.Text,
+                    m.MessageId,
+                    m.SendTime,
+                    m.SenderId,
+                    m.SenderUsername
+                    ))); 
+        }
+        catch (Exceptions.NotFound e)
+        {
+            return NotFound("Chat not found");
+            // TODO сделать нормальные ошибки
+        }
     }
     
     public record GetMessagesFromChatResponse(
-        [Required] [property: JsonPropertyName("chats")] List<GetMessagesFromChatResponseField> Chats);
+        [Required] [property: JsonPropertyName("messages")] List<GetMessagesFromChatResponseField> Chats);
     public record GetMessagesFromChatResponseField(
         [Required] [property: JsonPropertyName("text")] string Text,
+        [Required] [property: JsonPropertyName("message_id")] int MessageId,
         [Required] [property: JsonPropertyName("send_time")] DateTime SendTime,
-        [Required] [property: JsonPropertyName("chat_id")] int ChatId,
-        [Required] [property: JsonPropertyName("message_id")] int MessageId);
+        [Required] [property: JsonPropertyName("sender_id")] int SenderId,
+        [Required] [property: JsonPropertyName("sender_username")] string SenderUsername
+        );
 }
 
 

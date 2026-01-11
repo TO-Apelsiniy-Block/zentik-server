@@ -18,6 +18,7 @@ public class SseSession
         await _httpResponse.WriteAsync(message);
         if (!message.EndsWith("\n\n"))
             await _httpResponse.WriteAsync("\n\n");
+
         await _httpResponse.BodyWriter.FlushAsync();
     }
 
