@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace ZenticServer.Message;
 
 public interface IRepository

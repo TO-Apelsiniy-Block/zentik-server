@@ -35,7 +35,7 @@ public class Controller : ControllerBase
     public record RegisterRequest(
         [Required] [property: JsonPropertyName("username")] string Username,
         [Required] [property: JsonPropertyName("password")] string Password,
-        [Required] [property: JsonPropertyName("email")] string Email,
+        [Required] [property: JsonPropertyName("email")] string Email, // TODO валидация имейла
         [Required] [property: JsonPropertyName("email_code")] int EmailCode, 
         // Код подтверждения почты
         [Required] [property: JsonPropertyName("device_id")] int DeviceId);
@@ -89,7 +89,7 @@ public class Controller : ControllerBase
         
         var tokenString = new JwtSecurityTokenHandler().WriteToken(
             JwtHandler.Instance.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
-            new JwtTokenData(Email: loginData.Email, 3)));
+            new JwtTokenData(Email: loginData.Email, user.UserId)));
 
         return new LoginResponse(tokenString);
     }

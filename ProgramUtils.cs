@@ -22,6 +22,7 @@ public class ProgramUtils
     private void SetDependencyInjection()
     {
         _builder.Services.AddScoped<Chat.IRepository, Chat.Repository>();
+        _builder.Services.AddScoped<Chat.Pm.IRepository, Chat.Pm.Repository>();
         _builder.Services.AddScoped<Message.IRepository, Message.Repository>();
         _builder.Services.AddScoped<User.IRepository, User.Repository>();
         _builder.Services.AddScoped<EmailConfirmation.IRepository, EmailConfirmation.Repository>();
@@ -59,8 +60,6 @@ public class ProgramUtils
 
     private async Task SetDbConnection()
     {
-        var connectionString = "Host=127.0.0.1;Username=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ;Password=qweqwe;Database=Zentik";
-        Console.WriteLine(_dbSettings.ConnectionString);
         _builder.Services.AddDbContext<Db.ApplicationDbContext>(options =>
         {
             options.UseNpgsql(

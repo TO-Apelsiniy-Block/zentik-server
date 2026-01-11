@@ -43,13 +43,12 @@ public class Repository(Db.ApplicationDbContext context) : IRepository
                     a.Email == email && 
                     a.DeviceId == deviceId && 
                     a.Code == code && 
-                    a.UpdatedAt + TimeSpan.FromMinutes(5) < DateTime.UtcNow)
+                    a.UpdatedAt + TimeSpan.FromMinutes(5) > DateTime.UtcNow)
                 .ExecuteDeleteAsync() == 1;
         }
         catch (InvalidOperationException e)
         {
             return false;
         }
-        return false;
     }
 }

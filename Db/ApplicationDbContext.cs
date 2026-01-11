@@ -76,6 +76,7 @@ public class ApplicationDbContext : DbContext
                     entity.ToTable("chat_user");
                     entity.Property(z => z.ChatId).HasColumnName("chat_id").IsRequired();
                     entity.Property(z => z.UserId).HasColumnName("user_id").IsRequired();
+                    entity.Property(z => z.Role).HasColumnName("role").IsRequired();
                     entity.HasOne(z => z.Chat)
                         .WithMany(z => z.ChatUsers)
                         .HasForeignKey(z => z.ChatId)

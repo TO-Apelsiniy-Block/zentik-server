@@ -5,6 +5,5 @@ namespace ZenticServer.Chat;
 public class Types
 {
     public static string PersonalMessage => "PersonalMessage";
-    
-    public static readonly IEnumerable<string> AllTypes = new HashSet<string>() {PersonalMessage};
+    public static string Group => "Group";
 }

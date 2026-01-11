@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ZenticServer.Auth;
 
 namespace ZenticServer.Chat.Pm;
 
@@ -13,9 +14,22 @@ public class Controller : ControllerBase
 {
     [HttpPost]
     [Authorize]
-    public async Task CreatePm(CreatePmRequest requestData)
+    public async Task<ActionResult> CreatePm(
+        CreatePmRequest requestData,
+        IRepository pmRepository)
     {
-        
+        var firstUserId = User.GetUserId();
+        try
+        {
+            await pmRepository.Create(firstUserId, requestData.SecondUserId);
+
+        }
+        catch (Exceptions.AlreadyExists e)
+        {
+            return Conflict();
+        }
+
+        return Ok();
     }
 
     public record CreatePmRequest(
