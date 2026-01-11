@@ -35,20 +35,22 @@ public class Repository(Db.ApplicationDbContext context) : IRepository
 
     public async Task<bool> CheckCode(string email, int deviceId, int code)
     {
-        
-        try
-        {
             return await _context.EmailConfirmations
                 .Where(a => 
                     a.Email == email && 
                     a.DeviceId == deviceId && 
                     a.Code == code && 
                     a.UpdatedAt + TimeSpan.FromMinutes(5) > DateTime.UtcNow)
-                .ExecuteDeleteAsync() == 1;
-        }
-        catch (InvalidOperationException e)
-        {
-            return false;
-        }
+                .AnyAsync();
     }
+
+    public async Task DeleteCode(string email, int deviceId)
+    {
+        await _context.EmailConfirmations
+            .Where(a => 
+                a.Email == email && 
+                a.DeviceId == deviceId)
+            .ExecuteDeleteAsync();
+    }
+    
 }

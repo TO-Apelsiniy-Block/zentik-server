@@ -30,6 +30,7 @@ public class Controller : ControllerBase
         {
             return Conflict();
         }
+        await emailConfirmationRepository.DeleteCode(registerData.Email, registerData.DeviceId);
         return Ok();
     }
     public record RegisterRequest(
@@ -40,7 +41,6 @@ public class Controller : ControllerBase
         // Код подтверждения почты
         [Required] [property: JsonPropertyName("device_id")] int DeviceId);
     
-
     
     // Выслать код на почту
     [HttpPost("email_confirmation")]
@@ -61,7 +61,6 @@ public class Controller : ControllerBase
         [Required] [property: JsonPropertyName("device_id")] int DeviceId);
     
     
-    
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login(
         IConfiguration config, 
@@ -73,7 +72,7 @@ public class Controller : ControllerBase
         if (! await emailConfirmationRepository.CheckCode(
                 loginData.Email, loginData.DeviceId, loginData.EmailCode))
             return Unauthorized("Wrong email confirmation code");
-        
+
         // Проверка пароля и почты
         User.Model user;
         try
@@ -91,6 +90,8 @@ public class Controller : ControllerBase
             JwtHandler.Instance.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
             new JwtTokenData(Email: loginData.Email, user.UserId)));
 
+        await emailConfirmationRepository.DeleteCode(loginData.Email, loginData.DeviceId);
+        
         return new LoginResponse(tokenString);
     }
 

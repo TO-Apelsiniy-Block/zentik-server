@@ -6,7 +6,6 @@ using System.Text;
 
 namespace ZenticServer.Auth;
 
-
 public class JwtHandler
 {
     private static readonly Lazy<JwtHandler> _instance = 
@@ -14,8 +13,7 @@ public class JwtHandler
 
     public static JwtHandler Instance => _instance.Value;
 
-    private JwtHandler()
-    { }
+    private JwtHandler() { }
     
     public JwtSecurityToken Create(JwtSettings jwtSettings, JwtTokenData tokenData)
     {
