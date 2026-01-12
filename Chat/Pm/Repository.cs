@@ -13,19 +13,19 @@ public class Repository : IRepository
     }
     
     
-    public async Task Create(int firstUserId, int secondUserId)
+    public async Task<IRepository.CreatePmDto> Create(int firstUserId, int secondUserId)
     {
         var pmCount = await _context.Chats
             .Include(s => s.Users.Where(
-                s => s.UserId == firstUserId || s.UserId == secondUserId)
+                u => u.UserId == firstUserId || u.UserId == secondUserId)
             ).Where(e => 
                 e.Type == Chat.Types.PersonalMessage && 
-                e.Users.Count(u => u.UserId == firstUserId || u.UserId == secondUserId) == 2
+                e.Users.All(u => u.UserId == firstUserId || u.UserId == secondUserId)
             ).CountAsync();
         
         if (pmCount != 0)
             throw new Exceptions.AlreadyExists();
-        _context.Chats.Add(new Chat.Model()
+        var newChat = _context.Chats.Add(new Chat.Model()
         {
             Type = Chat.Types.PersonalMessage, 
             Messages = new List<Message.Model>() {new Message.Model()
@@ -38,9 +38,18 @@ public class Repository : IRepository
                 new ChatUser.Model() {Role = Chat.ChatUser.Role.Pm, UserId = firstUserId},
                 new ChatUser.Model() {Role = Chat.ChatUser.Role.Pm, UserId = secondUserId}
             }
-        });
+        }).Entity;
         await _context.SaveChangesAsync();
-        
+
+        return new()
+        {
+            ChatId = newChat.ChatId,
+            Name = "asd",
+            FirstMessageSender = "awd",
+            FirstMessageText = "awd"
+            
+        };
+
     }
     
 }
