@@ -14,8 +14,6 @@ public class SseController : ControllerBase
     [Authorize]
     public async Task GetEvents(int deviceId, SseSessionManager sessionManager)
     {
-        Console.WriteLine("GetEvents Start");
-        
         sessionManager.AddSession(HttpContext.Response, User.GetUserId(), deviceId);
         
         // Бесконечное ожидание закрытия соединения
@@ -25,8 +23,6 @@ public class SseController : ControllerBase
             await Task.Delay(Timeout.Infinite, ct);
         }
         catch (OperationCanceledException e) {}
-        
-        Console.WriteLine("GetEvents End");
     }
 }
 

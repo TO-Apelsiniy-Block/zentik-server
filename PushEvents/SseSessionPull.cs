@@ -31,12 +31,10 @@ public class SseSessionPull
             _sessions[eventData.UserId] = new();
         if (_sessions[eventData.UserId].TryGetValue(eventData.DeviceId, out var oldSession))
         { // Если одно устройство установило соединение два раза, то закрываем оба
-            Console.WriteLine("Close start");
             eventData.HttpResponse.HttpContext.Abort();
             Console.WriteLine(eventData.HttpResponse.HttpContext.RequestAborted.IsCancellationRequested);
             
             await _sessions[eventData.UserId][eventData.DeviceId].Close();
-            Console.WriteLine("Close end");
             
             return; 
         }
@@ -96,19 +94,15 @@ public class SseSessionPull
             switch (sessionEvent)
             {
                 case SendSessionEvent:
-                    Console.WriteLine("SendSessionEvent");
                     await SendMessage((sessionEvent as SendSessionEvent)!);
                     break;
                 case AddSessionEvent:
-                    Console.WriteLine("CreateSessionEvent");
                     await AddSession((sessionEvent as AddSessionEvent)!);
                     break;
                 case DeleteSessionEvent:
-                    Console.WriteLine("DeleteSessionEvent");
                     await DeleteSession((sessionEvent as DeleteSessionEvent)!);
                     break;
                 case KeepAliveSessionEvent:
-                    Console.WriteLine("KeepAliveSessionEvent");
                     await SendKeepAlive((sessionEvent as KeepAliveSessionEvent)!);
                     break;
                 

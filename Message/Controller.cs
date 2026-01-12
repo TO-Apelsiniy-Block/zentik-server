@@ -19,22 +19,28 @@ public class Controller : ControllerBase
     public async Task<IResult> WriteMessage(
         NewMessageData bodyData, 
         IRepository repository,
-        PushEvents.EventManager eventManager)
+        PushEvents.EventManager eventManager,
+        Chat.IRepository chatRepository)
     {
         try
         {
             await repository.CreateMessage(bodyData.Text, 
                 User.GetUserId(), bodyData.ChatId);
-            eventManager.SendMessage(
-                new PushEvents.Events.NewMessage(bodyData.Text, User.GetUserId(), bodyData.ChatId), 
-                User.GetUserId());
-            return Results.Ok();
-            
         }
         catch (Exceptions.NotFound e)
         {
             return Results.NotFound("Chat not found");
         }
+        foreach (var chatMember in await chatRepository.GetUsersFromChat(
+                     bodyData.ChatId, 0, Int32.MaxValue))
+        {
+            eventManager.SendMessage(
+                new PushEvents.Events.NewMessage(bodyData.Text, User.GetUserId(), bodyData.ChatId), 
+                chatMember.UserId);
+        }
+
+        return Results.Ok();
+        
     }
     
     public record NewMessageData(
@@ -56,8 +62,7 @@ public class Controller : ControllerBase
         }
         catch (Exceptions.NotFound e)
         {
-            return Forbid();
-            // TODO сделать нормальные ошибки
+            return Forbid(); // TODO сделать нормальные ошибки
         }
         try
         {
@@ -74,7 +79,6 @@ public class Controller : ControllerBase
         catch (Exceptions.NotFound e)
         {
             return NotFound("Chat not found");
-            // TODO сделать нормальные ошибки
         }
     }
     
