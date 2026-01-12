@@ -19,6 +19,6 @@ public class EventManager
     public void SendMessage(Events.NewMessage eventData, int userId)
     { 
         // Событие отправляется именно юзеру 
-        _sessionManager.Send(JsonSerializer.Serialize(eventData), Events.EventTypes.NewMessage, userId);
+        _sessionManager.Send(JsonSerializer.Serialize(eventData), Events.Types.NewMessage, userId);
     }
 }

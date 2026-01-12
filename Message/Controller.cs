@@ -16,7 +16,7 @@ public class Controller : ControllerBase
 {
     [HttpPost]
     [Authorize]
-    public async Task<IResult> WriteMessage(
+    public async Task<ActionResult> WriteMessage(
         NewMessageData bodyData, 
         IRepository repository,
         PushEvents.EventManager eventManager,
@@ -24,23 +24,26 @@ public class Controller : ControllerBase
     {
         try
         {
-            await repository.CreateMessage(bodyData.Text, 
-                User.GetUserId(), bodyData.ChatId);
+            var chatUser = await chatRepository.GetChatUser(bodyData.ChatId, User.GetUserId()); 
         }
         catch (Exceptions.NotFound e)
         {
-            return Results.NotFound("Chat not found");
+            return Forbid(); // TODO сделать нормальные ошибки
         }
-        foreach (var chatMember in await chatRepository.GetUsersFromChat(
-                     bodyData.ChatId, 0, Int32.MaxValue))
-        {
-            eventManager.SendMessage(
-                new PushEvents.Events.NewMessage(bodyData.Text, User.GetUserId(), bodyData.ChatId), 
-                chatMember.UserId);
-        }
+        await repository.CreateMessage(
+            bodyData.Text, 
+            User.GetUserId(), 
+            bodyData.ChatId);
 
-        return Results.Ok();
-        
+        var chatMembers = await chatRepository.GetUsersFromChat(
+            bodyData.ChatId,
+            0,
+            Int32.MaxValue);
+        chatMembers.ForEach(c => eventManager.SendMessage(
+            new PushEvents.Events.NewMessage(bodyData.Text, User.GetUserId(), bodyData.ChatId), 
+            c.UserId));
+
+        return Ok();
     }
     
     public record NewMessageData(
@@ -51,6 +54,8 @@ public class Controller : ControllerBase
     
     [HttpGet("{chatId}")]
     [Authorize]
+    [ProducesResponseType(typeof(GetMessagesFromChatResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<GetMessagesFromChatResponse>> GetMessagesFromChat(
         int offset, int limit, int chatId, 
         IRepository repository, 
@@ -64,22 +69,12 @@ public class Controller : ControllerBase
         {
             return Forbid(); // TODO сделать нормальные ошибки
         }
-        try
-        {
-            var messages = await repository.GetMessages(chatId, offset, limit);
-            return  new GetMessagesFromChatResponse(
-                messages.ConvertAll(m => new GetMessagesFromChatResponseField(
-                    m.Text,
-                    m.MessageId,
-                    m.SendTime,
-                    m.SenderId,
-                    m.SenderUsername
-                    ))); 
-        }
-        catch (Exceptions.NotFound e)
-        {
-            return NotFound("Chat not found");
-        }
+        var messages = await repository.GetMessages(chatId, offset, limit);
+        var result = new GetMessagesFromChatResponse(
+            messages.ConvertAll(m => new GetMessagesFromChatResponseField(
+                m.Text, m.MessageId, m.SendTime,
+                m.SenderId, m.SenderUsername)));
+        return Ok(result);
     }
     
     public record GetMessagesFromChatResponse(

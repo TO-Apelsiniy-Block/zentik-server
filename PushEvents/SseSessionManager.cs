@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace ZenticServer.PushEvents;
 
 
@@ -14,30 +16,28 @@ public class SseSessionManager
     public SseSessionManager(SseSettings settings)
     {
         _settings = settings;
-        
+        _keepAlive = KeepAlive();
         _channels = new (5);
         for (int i=0; i<_settings.ChannelsCount; i++)
         {
             _channels.Add(new SseSessionPull());
         }
-
-        _keepAlive = KeepAlive();
-
     }
     
     public void AddSession(HttpResponse httpResponse, int userId, int deviceId)
     {
         var currentChannel = _channels[userId % _settings.ChannelsCount];
-        
         currentChannel.SendEvent(new AddSessionEvent(userId, deviceId, httpResponse));
     }
 
-    public void Send(string message, Events.EventTypes eventTypes, int userId)
+    public void Send(string message, Events.Types types, int userId)
     {
         _channels[userId % _settings.ChannelsCount].SendEvent(
             new SendSessionEvent(
-                $"event: {Events.EventTypesExtension.ToString(eventTypes)}" +
-                $"\ndata:{message}", 
+                $"""
+                 event: {Events.TypesExtension.ToString(types)}
+                 data:{message}
+                 """, 
                 userId));
     }
 

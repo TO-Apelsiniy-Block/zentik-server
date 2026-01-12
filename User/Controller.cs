@@ -9,7 +9,6 @@ namespace ZenticServer.User;
 [Route("user")]
 public class Controller : ControllerBase
 {
-
     [HttpGet("{email}")]
     public async Task<ActionResult<FindByEmailResponse>> FindByEmail(
         string email, IRepository repository)

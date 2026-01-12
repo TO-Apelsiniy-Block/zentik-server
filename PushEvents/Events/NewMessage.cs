@@ -9,5 +9,5 @@ public record NewMessage(
     [property: JsonPropertyName("sender_id")] [Required] int SenderId,
     [property: JsonPropertyName("chat_id")] [Required] int ChatId
     // Время отправки, айди отправителя и тд
-) : IEvent;
+);
 
