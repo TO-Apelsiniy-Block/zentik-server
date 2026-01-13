@@ -7,12 +7,18 @@
     }
   },
   "JwtSettings": {
-    "Secret": "your-secret-key-min-32-chars-long",
+    "Secret": ..,
     "Issuer": "zentik-server",
     "Audience": "zentik-client",
     "ExpirationMinutes": 43200
   },
   "DbSettings": {
-    "ConnectionString": "Host=127.0.0.1;Username=ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ;Password=qweqwe;Database=Zentik;IncludeErrorDetail=true"
+    "ConnectionString": "Host=...;Username=...;Password=...;Database=..."
+  },
+  "EmailSettings": {
+    "EmailPassword": "...",
+    "EmailAddr": "smtp.yandex.ru",
+    "Port": 465,
+    "Security": "SSL"
   }
 }

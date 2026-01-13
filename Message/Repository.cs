@@ -34,14 +34,10 @@ public class Repository : IRepository
         int chatId, int offset, int limit)
     {
         return await _context.Messages
-            .Where(c => c.ChatId == chatId)
+            .Where(c => c.ChatId == chatId && c.Type != Types.First)
             .Select(m => new IRepository.MesssageListItemDto
                 {
-                Text = m.Type == Types.Text ?
-                    m.Text.Text 
-                    : m.Type == Types.First ?
-                    "Hello chat!"
-                    : "Unknown message",
+                Text = m.Type == Types.Text ? m.Text.Text : "Unknown message",
                 MessageId = m.MessageId,
                 SendTime = m.CreatedAt,
                 SenderId = m.SenderId,

@@ -28,16 +28,16 @@ public class Controller : ControllerBase
         {
             return Conflict();
         }
-        return Ok(new CreatePmResponse(1, "1", "2", "1"));
+        return Ok(new CreatePmResponse(1, "1"));
     }
 
     public record CreatePmRequest(
         [Required] [property: JsonPropertyName("second_user_id")] int SecondUserId);
     public record CreatePmResponse(
         [Required] [property: JsonPropertyName("chat_id")] int ChatId,
-        [Required] [property: JsonPropertyName("chat_name")] string ChatName,
-        [Required] [property: JsonPropertyName("last_message_text")] string LastMessageText,
-        [Required] [property: JsonPropertyName("last_message_sender")] string LastMessageSender
+        [Required] [property: JsonPropertyName("chat_name")] string ChatName
+        // [Required] [property: JsonPropertyName("last_message_text")] string LastMessageText
+        // [Required] [property: JsonPropertyName("last_message_sender")] string LastMessageSender
         );
 
 }

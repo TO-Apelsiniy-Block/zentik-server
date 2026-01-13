@@ -102,7 +102,9 @@ public class Controller : ControllerBase
         // Код подтверждения почты
         [Required] [property: JsonPropertyName("device_id")] int DeviceId);
         
-    public record LoginResponse(string Token);
+    public record LoginResponse(
+        [Required] [property: JsonPropertyName("token")] string Token
+        );
 
 
 }

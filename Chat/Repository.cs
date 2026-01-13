@@ -82,7 +82,7 @@ public class Repository : IRepository
                         .Select(m => m.Type == Message.Types.Text
                         ? m.Text.Text
                             : m.Type ==  Message.Types.First
-                        ? "Hello world!"
+                        ? "Нет сообщений"
                             : "Unknown message"
                         )
                         .First(),

@@ -30,7 +30,7 @@ public class Controller : ControllerBase
         {
             return Forbid(); // TODO сделать нормальные ошибки
         }
-        await repository.CreateMessage(
+        var newMessage = await repository.CreateMessage(
             bodyData.Text, 
             User.GetUserId(), 
             bodyData.ChatId);
@@ -40,7 +40,12 @@ public class Controller : ControllerBase
             0,
             Int32.MaxValue);
         chatMembers.ForEach(c => eventManager.SendMessage(
-            new PushEvents.Events.NewMessage(bodyData.Text, User.GetUserId(), bodyData.ChatId), 
+            new PushEvents.Events.NewMessage(
+                bodyData.Text,
+                User.GetUserId(),
+                newMessage.Sender.Username,
+                newMessage.ChatId,
+                newMessage.CreatedAt), 
             c.UserId));
 
         return Ok();
@@ -72,7 +77,8 @@ public class Controller : ControllerBase
         var messages = await repository.GetMessages(chatId, offset, limit);
         var result = new GetMessagesFromChatResponse(
             messages.ConvertAll(m => new GetMessagesFromChatResponseField(
-                m.Text, m.MessageId, m.SendTime,
+                m.Text, // m.MessageId, 
+                m.SendTime,
                 m.SenderId, m.SenderUsername)));
         return Ok(result);
     }
@@ -81,7 +87,6 @@ public class Controller : ControllerBase
         [Required] [property: JsonPropertyName("messages")] List<GetMessagesFromChatResponseField> Chats);
     public record GetMessagesFromChatResponseField(
         [Required] [property: JsonPropertyName("text")] string Text,
-        [Required] [property: JsonPropertyName("message_id")] int MessageId,
         [Required] [property: JsonPropertyName("send_time")] DateTime SendTime,
         [Required] [property: JsonPropertyName("sender_id")] int SenderId,
         [Required] [property: JsonPropertyName("sender_username")] string SenderUsername

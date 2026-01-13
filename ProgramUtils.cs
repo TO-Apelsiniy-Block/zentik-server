@@ -11,6 +11,7 @@ public class ProgramUtils
     private static JwtSettings _jwtSettings;
     private static SseSettings _sseSettings;
     private static DbSettings _dbSettings;
+    private static EmailSettings _emailSettings;
     
     private static WebApplicationBuilder _builder;
 
@@ -94,6 +95,8 @@ public class ProgramUtils
         _sseSettings = new SseSettings();
 
         _dbSettings = _builder.Configuration.GetSection("DbSettings").Get<DbSettings>()!;
+
+        _emailSettings = _builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>()!;
     }
     
     

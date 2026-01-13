@@ -23,9 +23,8 @@ public class Controller : ControllerBase
             .ConvertAll(c => new GetChatsResponseField(
                 "1",
                 c.Chat.ChatId,
-                c.Name,
-                c.LastMessageText,
-                c.LastMessageSender
+                c.Chat.Type,
+                c.LastMessageText
                 ))
         );
 
@@ -38,8 +37,7 @@ public class Controller : ControllerBase
         [Required] [property: JsonPropertyName("name")] string Name,
         [Required] [property: JsonPropertyName("chat_id")] int ChatId,
         [Required] [property: JsonPropertyName("type")] string Type,
-        [Required] [property: JsonPropertyName("last_message_text")] string LastMessage,
-        [Required] [property: JsonPropertyName("last_message_sender")] string LastMessageSender
+        [Required] [property: JsonPropertyName("last_message_text")] string LastMessage
         );
     
     
@@ -88,7 +86,4 @@ public class Controller : ControllerBase
             return NotFound();
         }
     }
-
-
-        
 }

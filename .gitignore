@@ -170,4 +170,6 @@ Thumbs.db              # Windows Explorer metadata
 /Temp
 /.idea/
 
-secrets.json
+# ...
+appsettings.Development.json
+appsettings.json

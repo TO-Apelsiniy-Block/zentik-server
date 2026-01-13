@@ -16,7 +16,8 @@ public class Controller : ControllerBase
         try
         {
             var user = await repository.Get(email);
-            return new FindByEmailResponse(user.UserId, user.Username, user.Email);
+            return new FindByEmailResponse(user.UserId, user.Username //, user.Email
+            );
         }
         catch (Exceptions.NotFound e)
         {
@@ -26,6 +27,6 @@ public class Controller : ControllerBase
 
     public record FindByEmailResponse(
         [Required] [property: JsonPropertyName("user_id")] int UserId,
-        [Required] [property: JsonPropertyName("username")] string Username,
-        [Required] [property: JsonPropertyName("email")] string Email);
+        [Required] [property: JsonPropertyName("username")] string Username
+        );
 }
