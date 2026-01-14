@@ -19,3 +19,13 @@ public class DbSettings
     // TODO убрать пароль куда-то
     public string ConnectionString { get; set; } = string.Empty;
 }
+
+public class EmailSettings
+{
+    public string Email { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Host { get; set; } = string.Empty;
+    public int Port { get; set; }
+    public string Security { get; set; } = string.Empty;
+}

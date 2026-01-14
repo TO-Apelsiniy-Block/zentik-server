@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using ZenticServer.Exceptions;
 
 namespace ZenticServer.Chat.Pm;
 
@@ -23,7 +24,7 @@ public class Repository : IRepository
                 e.Users.All(u => u.UserId == firstUserId || u.UserId == secondUserId)
             ).CountAsync();
         
-        if (pmCount != 0)
+        if (pmCount != 0) // TODO А если юзера нету?
             throw new Exceptions.AlreadyExists();
         var newChat = _context.Chats.Add(new Chat.Model()
         {
@@ -47,9 +48,6 @@ public class Repository : IRepository
             Name = "asd",
             FirstMessageSender = "awd",
             FirstMessageText = "awd"
-            
         };
-
     }
-    
 }

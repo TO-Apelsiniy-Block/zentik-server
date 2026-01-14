@@ -16,8 +16,10 @@
     "ConnectionString": "Host=...;Username=...;Password=...;Database=..."
   },
   "EmailSettings": {
-    "EmailPassword": "...",
-    "EmailAddr": "smtp.yandex.ru",
+    "Email": "...",
+    "Name": "...",
+    "Password": "...",
+    "Host": "smtp.yandex.ru",
     "Port": 465,
     "Security": "SSL"
   }

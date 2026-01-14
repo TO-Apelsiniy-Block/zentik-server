@@ -87,17 +87,17 @@ public class ProgramUtils
 
     private static void LoadSettings()
     {
+        _jwtSettings = _builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
         _builder.Services.Configure<JwtSettings>(
             _builder.Configuration.GetSection("JwtSettings"));
-        
-        _jwtSettings = _builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
 
         _sseSettings = new SseSettings();
 
         _dbSettings = _builder.Configuration.GetSection("DbSettings").Get<DbSettings>()!;
 
         _emailSettings = _builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>()!;
+        _builder.Services.AddSingleton(_emailSettings);
+        _builder.Services.Configure<EmailSettings>(
+            _builder.Configuration.GetSection("EmailSettings"));
     }
-    
-    
 }
