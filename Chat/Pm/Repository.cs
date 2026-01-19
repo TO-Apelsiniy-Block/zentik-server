@@ -46,10 +46,15 @@ public class Repository
             .Where(u => u.UserId == secondUserId)
             .FirstAsync();
         
+        var FirstUser = await _context.Users
+            .Where(u => u.UserId == firstUserId)
+            .FirstAsync();
+        
         return new()
         {
             ChatId = newChat.ChatId,
-            Name = secondUser.Username
+            Name = secondUser.Username,
+            SecondName = FirstUser.Username
         };
     }
 
@@ -76,6 +81,7 @@ public class Repository
     
     public class CreatePmDto
     {
+        public string SecondName { get; set; } = "";
         public int ChatId { get; set; }
         public string Name { get; set; }
     }

@@ -18,7 +18,8 @@ public class Controller : ControllerBase
     public async Task<ActionResult<CreatePmResponse>> CreatePm(
         CreatePmRequest requestData,
         PushEvents.EventManager eventManager,
-        Repository pmRepository)
+        Repository pmRepository,
+        User.Repository userRepository)
     {
         var firstUserId = User.GetUserId();
         if (requestData.SecondUserId == firstUserId) return BadRequest();
@@ -32,7 +33,7 @@ public class Controller : ControllerBase
             return Conflict();
         }
         eventManager.NewChatPm(
-            new NewChatPm("Новый чат", qwe.Name, qwe.ChatId), 
+            new NewChatPm("Новый чат", qwe.SecondName, qwe.ChatId), 
             requestData.SecondUserId);
         return Ok(new CreatePmResponse(qwe.ChatId, qwe.Name));
     }
