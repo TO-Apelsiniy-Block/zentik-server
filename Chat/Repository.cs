@@ -89,9 +89,12 @@ public class Repository
                     LastMessageSender = c.Messages
                         .OrderByDescending(m => m.CreatedAt)
                         .Select(m => m.Sender.Username)
-                        .First()
+                        .First(),
+                    LastMessageTime = c.Messages
+                    .OrderByDescending(m => m.CreatedAt)
+                    .First().CreatedAt,
                 })
-                .ToListAsync();
+                .OrderByDescending(q => q.LastMessageTime).ToListAsync();
 
             return chats;
         }
@@ -140,6 +143,7 @@ public class Repository
         public string Name { get; set; }
         public string LastMessageText { get; set; }
         public string LastMessageSender { get; set; }
+        public DateTime LastMessageTime { get; set; }
     }
 }
 

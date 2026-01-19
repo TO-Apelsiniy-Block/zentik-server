@@ -13,7 +13,7 @@ public class Controller : ControllerBase
 {
     // Сначала подтверждение почты, потом регистрация
     [HttpPost("register")]
-    public async Task<ActionResult<LoginResponse>> Register(
+    public async Task<ActionResult<TokenResponse>> Register(
         IConfiguration config, 
         User.Repository userRepository,
         RegisterRequest registerData,
@@ -39,7 +39,7 @@ public class Controller : ControllerBase
                 new JwtTokenData(Email: registerData.Email, user.UserId)));
         
         await emailConfirmationRepository.DeleteCode(registerData.Email, registerData.DeviceId);
-        return Ok(new LoginResponse(tokenString));
+        return Ok(new TokenResponse(tokenString));
     }
     public record RegisterRequest(
         [Required] [property: JsonPropertyName("username")] string Username,
@@ -70,7 +70,7 @@ public class Controller : ControllerBase
     
     
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponse>> Login(
+    public async Task<ActionResult<TokenResponse>> Login(
         IConfiguration config, 
         LoginRequest loginData,
         User.Repository userRepository,
@@ -100,7 +100,7 @@ public class Controller : ControllerBase
 
         await emailConfirmationRepository.DeleteCode(loginData.Email, loginData.DeviceId);
         
-        return new LoginResponse(tokenString);
+        return new TokenResponse(tokenString);
     }
 
     public record LoginRequest(
@@ -110,7 +110,7 @@ public class Controller : ControllerBase
         // Код подтверждения почты
         [Required] [property: JsonPropertyName("device_id")] int DeviceId);
         
-    public record LoginResponse(
+    public record TokenResponse(
         [Required] [property: JsonPropertyName("token")] string Token
         );
 

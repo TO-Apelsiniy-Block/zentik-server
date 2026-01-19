@@ -42,7 +42,7 @@ public class Repository
                 SendTime = m.CreatedAt,
                 SenderId = m.SenderId,
                 SenderUsername = m.Sender.Username
-            }).ToListAsync();
+            }).OrderBy(m => m.SendTime).ToListAsync();
     }
     public class MesssageListItemDto
     {

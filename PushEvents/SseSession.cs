@@ -3,11 +3,9 @@ namespace ZenticServer.PushEvents;
 public class SseSession
 {
     private readonly HttpResponse _httpResponse;
-    private CancellationToken _cancellationToken;
     public SseSession(HttpResponse httpResponse)
     {
         _httpResponse = httpResponse;
-        _cancellationToken = httpResponse.HttpContext.RequestAborted;
     }
 
     public async Task Send(string message)
