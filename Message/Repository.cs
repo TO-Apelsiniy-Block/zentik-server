@@ -39,7 +39,7 @@ public class Repository
                 {
                 Text = m.Type == Types.Text ? m.Text.Text : "Unknown message",
                 MessageId = m.MessageId,
-                SendTime = m.CreatedAt,
+                SendTime = m.CreatedAt + TimeSpan.FromHours(3),
                 SenderId = m.SenderId,
                 SenderUsername = m.Sender.Username
             }).OrderBy(m => m.SendTime).ToListAsync();
