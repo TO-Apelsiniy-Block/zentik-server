@@ -4,7 +4,7 @@ using ZenticServer.Exceptions;
 
 namespace ZenticServer.Chat.Pm;
 
-public class Repository : IRepository
+public class Repository
 {
     private readonly Db.ApplicationDbContext _context;
     
@@ -14,7 +14,7 @@ public class Repository : IRepository
     }
     
     
-    public async Task<IRepository.CreatePmDto> Create(int firstUserId, int secondUserId)
+    public async Task<CreatePmDto> Create(int firstUserId, int secondUserId)
     {
         var pmCount = await _context.Chats
             .Include(s => s.Users.Where(
@@ -42,12 +42,41 @@ public class Repository : IRepository
         }).Entity;
         await _context.SaveChangesAsync();
 
+        var secondUser = await _context.Users
+            .Where(u => u.UserId == secondUserId)
+            .FirstAsync();
+        
         return new()
         {
             ChatId = newChat.ChatId,
-            Name = "asd",
-            FirstMessageSender = "awd",
-            FirstMessageText = "awd"
+            Name = secondUser.Username
         };
+    }
+
+    public async Task<CreatePmDto> GetIdByUsersIds(int firstUserId, int secondUserId)
+    {
+        // TODO Временный метод
+            var pm = await _context.Chats
+                .Include(s => s.Users.Where(
+                    u => u.UserId == firstUserId || u.UserId == secondUserId)
+                ).Where(e => 
+                    e.Type == Chat.Types.PersonalMessage && 
+                    e.Users.All(u => u.UserId == firstUserId || u.UserId == secondUserId)
+                ).FirstAsync();
+            var secondUser = await _context.Users
+                .Where(u => u.UserId == secondUserId)
+                .FirstAsync();
+        
+            return new()
+            {
+                ChatId = pm.ChatId,
+                Name = secondUser.Username
+            };
+    }
+    
+    public class CreatePmDto
+    {
+        public int ChatId { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -107,7 +107,7 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(z => z.Sender)
                 .WithMany(z => z.Messages)
                 .HasForeignKey(z => z.SenderId)
-                .OnDelete(DeleteBehavior.Cascade); // TODO изменить удаление аккаунта на деактивацию
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(d => d.Text)
                 .WithOne(d => d.Message)
                 .OnDelete(DeleteBehavior.Cascade)

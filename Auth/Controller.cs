@@ -13,25 +13,33 @@ public class Controller : ControllerBase
 {
     // Сначала подтверждение почты, потом регистрация
     [HttpPost("register")]
-    public async Task<IActionResult> Register(
-        User.IRepository userRepository,
+    public async Task<ActionResult<LoginResponse>> Register(
+        IConfiguration config, 
+        User.Repository userRepository,
         RegisterRequest registerData,
-        EmailConfirmation.IRepository emailConfirmationRepository)
+        EmailConfirmation.Repository emailConfirmationRepository)
     {
         if (! await emailConfirmationRepository.CheckCode(
                 registerData.Email, registerData.DeviceId, registerData.EmailCode))
-            return Unauthorized("Wrong email confirmation code");
-        
+            return BadRequest("Wrong email confirmation code");
+
+        User.Model user;
         try // TODO хеширование
         {
-            await userRepository.Create(registerData.Username, registerData.Password, registerData.Email);
+            user = await userRepository.Create(
+                registerData.Username, registerData.Password, registerData.Email);
         }
         catch (Exceptions.AlreadyExists ez)
         {
             return Conflict();
         }
+        
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(
+            JwtHandler.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
+                new JwtTokenData(Email: registerData.Email, user.UserId)));
+        
         await emailConfirmationRepository.DeleteCode(registerData.Email, registerData.DeviceId);
-        return Ok();
+        return Ok(new LoginResponse(tokenString));
     }
     public record RegisterRequest(
         [Required] [property: JsonPropertyName("username")] string Username,
@@ -46,8 +54,8 @@ public class Controller : ControllerBase
     [HttpPost("email_confirmation")]
     public async Task<IActionResult> EmailConfirmationSend(
         EmailConfirmationSendRequest bodyData,
-        EmailConfirmation.IRepository emailConfirmationRepository,
-        Email.IService emailService)
+        EmailConfirmation.Repository emailConfirmationRepository,
+        Email.Service emailService)
     {
         // TODO поставить ограничитель запросов
         var code = RandomNumberGenerator.GetInt32(100_000, 999_999);
@@ -65,13 +73,13 @@ public class Controller : ControllerBase
     public async Task<ActionResult<LoginResponse>> Login(
         IConfiguration config, 
         LoginRequest loginData,
-        User.IRepository userRepository,
-        EmailConfirmation.IRepository emailConfirmationRepository)
+        User.Repository userRepository,
+        EmailConfirmation.Repository emailConfirmationRepository)
     {
         
         if (! await emailConfirmationRepository.CheckCode(
                 loginData.Email, loginData.DeviceId, loginData.EmailCode))
-            return Unauthorized("Wrong email confirmation code");
+            return BadRequest("Wrong email confirmation code");
 
         // Проверка пароля и почты
         User.Model user;
@@ -87,7 +95,7 @@ public class Controller : ControllerBase
             return Unauthorized("Wrong email or password");
         
         var tokenString = new JwtSecurityTokenHandler().WriteToken(
-            JwtHandler.Instance.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
+            JwtHandler.Create(config.GetSection("JwtSettings").Get<JwtSettings>()!,
             new JwtTokenData(Email: loginData.Email, user.UserId)));
 
         await emailConfirmationRepository.DeleteCode(loginData.Email, loginData.DeviceId);

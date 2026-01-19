@@ -4,14 +4,16 @@ namespace ZenticServer.PushEvents.Events;
 // Типы событий
 public enum Types
 {
-    NewMessage
+    NewMessage,
+    NewChatPm
 }
 
 public static class TypesExtension
 {
     private static readonly Dictionary<Types, string> DictToString = new ()
     {
-        [Types.NewMessage] = "new_message"
+        [Types.NewMessage] = "new_message",
+        [Types.NewChatPm] = "new_chat_pm"
     };
 
     public static string ToString(Types types)

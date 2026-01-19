@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ZenticServer.EmailConfirmation;
 
-public class Repository(Db.ApplicationDbContext context) : IRepository
+public class Repository(Db.ApplicationDbContext context)
 {
     private readonly Db.ApplicationDbContext _context = context;
 

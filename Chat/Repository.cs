@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ZenticServer.Chat;
 
-public class Repository : IRepository 
+public class Repository 
 {
     private readonly Db.ApplicationDbContext _context;
     
@@ -44,7 +44,7 @@ public class Repository : IRepository
     }
     
 
-    public async Task<List<IRepository.ChatListItemDto>> GetWithExtra(
+    public async Task<List<ChatListItemDto>> GetWithExtra(
         int userId, int offset, int limit)
     {
         // Получение чатов пользователя вместе с:
@@ -66,7 +66,7 @@ public class Repository : IRepository
 
             var chats = await _context.Chats
                 .Where(c => c.Users.Any(u => u.UserId == userId))
-                .Select(c => new IRepository.ChatListItemDto
+                .Select(c => new ChatListItemDto
                 {
                     Chat = c,
                     Name = c.Type == Types.PersonalMessage
@@ -132,22 +132,14 @@ public class Repository : IRepository
             throw new Exceptions.NotFound();
         }
     }
-
     
-    public async Task Delete(int chatId)
-    { // Удаление именно чата
-        await _context.Chats
-            .Where(c => c.ChatId == chatId)
-            .ExecuteDeleteAsync();
-    }
-
     
-    public async Task ClearMessages(int chatId)
-    { // Удаление именно сообщений
-        // TODO сделать тип сообщение "AfterClear" для его вставки, вместо сохранения первого
-        await _context.Messages
-            .Where(c => c.ChatId == chatId && c.Type != Message.Types.First)
-            .ExecuteDeleteAsync();
+    public class ChatListItemDto
+    {
+        public Chat.Model Chat { get; set; }
+        public string Name { get; set; }
+        public string LastMessageText { get; set; }
+        public string LastMessageSender { get; set; }
     }
 }
 

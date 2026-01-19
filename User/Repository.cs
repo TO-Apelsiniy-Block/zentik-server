@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ZenticServer.User;
 
-public class Repository : IRepository
+public class Repository
 {
     private readonly Db.ApplicationDbContext _context;
     public Repository(Db.ApplicationDbContext context)
@@ -15,19 +15,6 @@ public class Repository : IRepository
         try
         {
             var user = await _context.Users.Where(b => b.Email == email).FirstAsync();
-            return user;
-        }
-        catch (InvalidOperationException e)
-        {
-            throw new Exceptions.NotFound();
-        }
-    }
-
-    public async Task<Model> Get(int userId)
-    {
-        try
-        {
-            var user = await _context.Users.Where(b => b.UserId == userId).FirstAsync();
             return user;
         }
         catch (InvalidOperationException e)
@@ -48,7 +35,7 @@ public class Repository : IRepository
         try
         {
             await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync(); // TODO перенести коммит в другое место
+            await _context.SaveChangesAsync();
         }
         catch (DbUpdateException e)
         {

@@ -18,9 +18,9 @@ public class Controller : ControllerBase
     [Authorize]
     public async Task<ActionResult> WriteMessage(
         NewMessageData bodyData, 
-        IRepository repository,
+        Repository repository,
         PushEvents.EventManager eventManager,
-        Chat.IRepository chatRepository)
+        Chat.Repository chatRepository)
     {
         try
         {
@@ -39,14 +39,21 @@ public class Controller : ControllerBase
             bodyData.ChatId,
             0,
             Int32.MaxValue);
-        chatMembers.ForEach(c => eventManager.SendMessage(
-            new PushEvents.Events.NewMessage(
-                bodyData.Text,
-                User.GetUserId(),
-                newMessage.Sender.Username,
-                newMessage.ChatId,
-                newMessage.CreatedAt), 
-            c.UserId));
+        foreach (var chatMember in chatMembers)
+        {
+            if (chatMember.UserId == User.GetUserId())
+            {
+                continue;
+            }
+            eventManager.SendMessage(
+                new PushEvents.Events.NewMessage(
+                    bodyData.Text,
+                    User.GetUserId(),
+                    newMessage.Sender.Username,
+                    newMessage.ChatId,
+                    newMessage.CreatedAt),
+                chatMember.UserId);
+        }
 
         return Ok();
     }
@@ -63,8 +70,8 @@ public class Controller : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<GetMessagesFromChatResponse>> GetMessagesFromChat(
         int offset, int limit, int chatId, 
-        IRepository repository, 
-        Chat.IRepository chatRepository)
+        Repository repository, 
+        Chat.Repository chatRepository)
     {
         try
         {
@@ -79,12 +86,14 @@ public class Controller : ControllerBase
             messages.ConvertAll(m => new GetMessagesFromChatResponseField(
                 m.Text, // m.MessageId, 
                 m.SendTime,
-                m.SenderId, m.SenderUsername)));
+                m.SenderId, m.SenderUsername)), User.GetUserId());
         return Ok(result);
     }
     
     public record GetMessagesFromChatResponse(
-        [Required] [property: JsonPropertyName("messages")] List<GetMessagesFromChatResponseField> Chats);
+        [Required] [property: JsonPropertyName("messages")] List<GetMessagesFromChatResponseField> Chats,
+        [Required] [property: JsonPropertyName("user_id")] int UserId
+        );
     public record GetMessagesFromChatResponseField(
         [Required] [property: JsonPropertyName("text")] string Text,
         [Required] [property: JsonPropertyName("send_time")] DateTime SendTime,

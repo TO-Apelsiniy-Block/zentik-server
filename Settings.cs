@@ -16,7 +16,6 @@ public class SseSettings
 
 public class DbSettings
 {
-    // TODO убрать пароль куда-то
     public string ConnectionString { get; set; } = string.Empty;
 }
 

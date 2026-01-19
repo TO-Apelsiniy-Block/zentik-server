@@ -4,7 +4,7 @@ using ZenticServer.Message.Type;
 
 namespace ZenticServer.Message;
 
-public class Repository : IRepository
+public class Repository
 {
     private readonly Db.ApplicationDbContext _context;
     
@@ -30,12 +30,12 @@ public class Repository : IRepository
         return newMessage;
     }
 
-    public async Task<List<IRepository.MesssageListItemDto>> GetMessages(
+    public async Task<List<MesssageListItemDto>> GetMessages(
         int chatId, int offset, int limit)
     {
         return await _context.Messages
             .Where(c => c.ChatId == chatId && c.Type != Types.First)
-            .Select(m => new IRepository.MesssageListItemDto
+            .Select(m => new MesssageListItemDto
                 {
                 Text = m.Type == Types.Text ? m.Text.Text : "Unknown message",
                 MessageId = m.MessageId,
@@ -44,6 +44,13 @@ public class Repository : IRepository
                 SenderUsername = m.Sender.Username
             }).ToListAsync();
     }
-    
+    public class MesssageListItemDto
+    {
+        public string Text { get; set; }
+        public int MessageId { get; set; }
+        public int SenderId { get; set; }
+        public string SenderUsername { get; set; }
+        public DateTime SendTime { get; set; }
+    }
     
 }

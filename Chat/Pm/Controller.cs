@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZenticServer.Auth;
+using ZenticServer.PushEvents.Events;
 
 namespace ZenticServer.Chat.Pm;
 
@@ -16,19 +17,24 @@ public class Controller : ControllerBase
     [Authorize]
     public async Task<ActionResult<CreatePmResponse>> CreatePm(
         CreatePmRequest requestData,
-        IRepository pmRepository)
+        PushEvents.EventManager eventManager,
+        Repository pmRepository)
     {
         var firstUserId = User.GetUserId();
-        if (requestData.SecondUserId == firstUserId) return Conflict();
+        if (requestData.SecondUserId == firstUserId) return BadRequest();
+        Repository.CreatePmDto qwe;
         try
         {
-            await pmRepository.Create(firstUserId, requestData.SecondUserId);
+            qwe = await pmRepository.Create(firstUserId, requestData.SecondUserId);
         }
         catch (Exceptions.AlreadyExists e)
-        {
+        { // TODO
             return Conflict();
         }
-        return Ok(new CreatePmResponse(1, "1"));
+        eventManager.NewChatPm(
+            new NewChatPm("Новый чат", qwe.Name, qwe.ChatId), 
+            requestData.SecondUserId);
+        return Ok(new CreatePmResponse(qwe.ChatId, qwe.Name));
     }
 
     public record CreatePmRequest(
@@ -39,5 +45,19 @@ public class Controller : ControllerBase
         // [Required] [property: JsonPropertyName("last_message_text")] string LastMessageText
         // [Required] [property: JsonPropertyName("last_message_sender")] string LastMessageSender
         );
+            
+            
+    [HttpPost("qwe")]
+    [Authorize]
+    public async Task<ActionResult<CreatePmResponse>> GetChatIdPm(
+        CreatePmRequest requestData,
+        Repository pmRepository)
+    { // TODO Временный на минимум
+        var firstUserId = User.GetUserId();
+
+        var ewq = await pmRepository.GetIdByUsersIds(firstUserId, requestData.SecondUserId);
+        return Ok(new CreatePmResponse(ewq.ChatId, ewq.Name));
+    }
+    
 
 }

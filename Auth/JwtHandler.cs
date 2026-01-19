@@ -8,14 +8,9 @@ namespace ZenticServer.Auth;
 
 public class JwtHandler
 {
-    private static readonly Lazy<JwtHandler> _instance = 
-        new Lazy<JwtHandler>(() => new JwtHandler());
-
-    public static JwtHandler Instance => _instance.Value;
-
     private JwtHandler() { }
     
-    public JwtSecurityToken Create(JwtSettings jwtSettings, JwtTokenData tokenData)
+    public static JwtSecurityToken Create(JwtSettings jwtSettings, JwtTokenData tokenData)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

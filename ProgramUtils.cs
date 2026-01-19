@@ -22,17 +22,17 @@ public class ProgramUtils
     
     private void SetDependencyInjection()
     {
-        _builder.Services.AddScoped<Chat.IRepository, Chat.Repository>();
-        _builder.Services.AddScoped<Chat.Pm.IRepository, Chat.Pm.Repository>();
-        _builder.Services.AddScoped<Message.IRepository, Message.Repository>();
-        _builder.Services.AddScoped<User.IRepository, User.Repository>();
-        _builder.Services.AddScoped<EmailConfirmation.IRepository, EmailConfirmation.Repository>();
+        _builder.Services.AddScoped<Chat.Repository>();
+        _builder.Services.AddScoped<Chat.Pm.Repository>();
+        _builder.Services.AddScoped<Message.Repository>();
+        _builder.Services.AddScoped<User.Repository>();
+        _builder.Services.AddScoped<EmailConfirmation.Repository>();
 
         var sessionManager = new PushEvents.SseSessionManager(_sseSettings);
         _builder.Services.AddSingleton(sessionManager);
         _builder.Services.AddSingleton(new PushEvents.EventManager(sessionManager));
 
-        _builder.Services.AddScoped<Email.IService, Email.Service>();
+        _builder.Services.AddScoped<Email.Service>();
     }
     
     private void SetAuth()
@@ -73,7 +73,6 @@ public class ProgramUtils
                         errorCodesToAdd: null);
                 });
         });
-
     }
 
     private ProgramUtils(WebApplicationBuilder builder)

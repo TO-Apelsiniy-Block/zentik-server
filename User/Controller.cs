@@ -11,7 +11,7 @@ public class Controller : ControllerBase
 {
     [HttpGet("{email}")]
     public async Task<ActionResult<FindByEmailResponse>> FindByEmail(
-        string email, IRepository repository)
+        string email, Repository repository)
     {
         try
         {

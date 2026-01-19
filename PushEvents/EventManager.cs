@@ -21,4 +21,10 @@ public class EventManager
         // Событие отправляется именно юзеру 
         _sessionManager.Send(JsonSerializer.Serialize(eventData), Events.Types.NewMessage, userId);
     }
+    
+    public void NewChatPm(Events.NewChatPm eventData, int userId)
+    { 
+        // Событие отправляется именно юзеру 
+        _sessionManager.Send(JsonSerializer.Serialize(eventData), Events.Types.NewChatPm, userId);
+    }
 }
